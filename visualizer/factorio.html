@@ -8,9 +8,29 @@
 
     const products = {};
 
-    const guns = ['pistol', 'submachine-gun', 'shotgun', 'combat-shotgun', 'railgun', 'rocket-launcher', 'flamethrower'];
-    const vehicles = ['car', 'tank', 'locomotive', 'fluid-wagon', 'cargo-wagon'];
-    const limited = ['rocket-silo', 'resource-monitor', 'small-plane', 'oil-refinery', 'lab']
+    const exclusions = {
+        guns: ['pistol', 'submachine-gun', 'shotgun', 'combat-shotgun', 'railgun', 'rocket-launcher', 'flamethrower'],
+        vehicles: ['car', 'tank', 'locomotive', 'fluid-wagon', 'cargo-wagon'],
+        limited: ['rocket-silo', 'resource-monitor', 'small-plane', 'oil-refinery', 'lab']
+    };
+
+    function flatten(iterable) {
+        const results = [];
+        iterateValues(iterable, x => iterateValues(x, y => results.push(y)));
+        return results;
+    }
+
+    function iterateValues(iterable, valueFunc) {
+        if(Array.isArray(iterable)) {
+            iterable.forEach(valueFunc);
+        } else {
+            for(key in iterable) {
+                valueFunc(iterable[key]);
+            }
+        }
+    }
+
+    const exclusionsList = flatten(exclusions);
 
     function handleProductSelection(selector) {
         const productName = selector.target['data-product'];
@@ -23,10 +43,8 @@
             const product = { isExcluded: false, isIngredient: false };
             if(productName.endsWith('equipment')
                 || productName.includes('armor')
-                || guns.includes(productName)
-                || vehicles.includes(productName)
-                || productName.endsWith('barrel')
-                || limited.includes(productName)) {
+                || exclusionsList.includes(productName)
+                || productName.endsWith('barrel')) {
                 product.isExcluded = true;
             }
             products[productName] = product;

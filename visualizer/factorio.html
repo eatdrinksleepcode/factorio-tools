@@ -24,6 +24,36 @@
                     .text(node.data);
             });
 
+        graphics.link(function(link){
+            // Notice the Triangle marker-end attribe:
+            return Viva.Graph.svg('path')
+                        .attr('stroke', 'gray')
+                        .attr('marker-end', 'url(#Triangle)');
+        }).placeLink(function(linkUI, fromPos, toPos) {
+            var data = 'M' + fromPos.x + ',' + fromPos.y +
+                        'L' + toPos.x + ',' + toPos.y;
+            linkUI.attr("d", data);
+        });
+
+        // Rendering arrow shape is achieved by using SVG markers, part of the SVG
+        // standard: http://www.w3.org/TR/SVG/painting.html#Markers
+        var createMarker = function(id) {
+                return Viva.Graph.svg('marker')
+                            .attr('id', id)
+                            .attr('viewBox', "0 0 10 10")
+                            .attr('refX', "10")
+                            .attr('refY', "5")
+                            .attr('markerUnits', "strokeWidth")
+                            .attr('markerWidth', "10")
+                            .attr('markerHeight', "5")
+                            .attr('orient', "auto");
+            },
+            marker = createMarker('Triangle');
+        marker.append('path').attr('d', 'M 0 0 L 10 5 L 0 10 z');
+        // Marker should be defined only once in <defs> child element of root <svg> element:
+        var defs = graphics.getSvgRoot().append('defs');
+        defs.append(marker);
+
         var layout = Viva.Graph.Layout.forceDirected(graph, {
             springLength : 100,
             springCoeff : 0.00005,

@@ -3,6 +3,9 @@
 <script src="vivagraph.js"></script>
 <script src="recipes.json"></script>
 <script>
+
+    var renderer = null;
+
     function createGraph() {
         var graph = Viva.Graph.graph();
 
@@ -61,7 +64,7 @@
             gravity : -2.2
         });
 
-        var renderer = Viva.Graph.View.renderer(graph,
+        renderer = Viva.Graph.View.renderer(graph,
         {
             container: document.getElementById('graphDiv'),
             graphics: graphics,
@@ -70,9 +73,26 @@
         );
         renderer.run();
     }
+
+    function handlePauseResumeClick(button) {
+        if(button.value === 'Pause') {
+            renderer.pause();
+            button.value = 'Resume';
+        } else {
+            renderer.resume();
+            button.value = 'Pause';
+        }
+    }
     </script>
 </head>
 <body onload="createGraph()">
-    <svg height="100%" width="100%" id="graphDiv"></svg>
+    <div style="display: flex; flex-direction: row; width: 100%; height: 100vh; overflow: hidden;">
+        <div style="flex: 6; display: flex; flex-direction: column">
+            <div style="flex: 1;">
+                <input type="button" onclick="handlePauseResumeClick(this)" value="Pause"/>
+            </div>
+            <svg style="flex: 8; overflow: auto; height: auto" id="graphDiv"></svg>
+        </div>
+    </div>
 </body>
 </html>

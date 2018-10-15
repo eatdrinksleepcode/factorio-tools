@@ -6,17 +6,62 @@
 
     var renderer = null;
 
+    const products = {};
+
+    const guns = ['pistol', 'submachine-gun', 'shotgun', 'combat-shotgun', 'railgun', 'rocket-launcher', 'flamethrower'];
+    const vehicles = ['car', 'tank', 'locomotive', 'fluid-wagon', 'cargo-wagon'];
+    const singles = ['rocket-silo', 'resource-monitor', 'small-plane']
+
+    function handleProductSelection(selector) {
+        const productName = selector.target['data-product'];
+        if(selector.target.checked) {
+            delete products[productName];
+        } else {
+            products[productName] = 'excluded';
+        }
+        createGraph();
+    }
+
+    function initializeProduct(productName) {
+        if(!(productName in products)) {
+            if(productName.endsWith('equipment')
+                || productName.includes('armor')
+                || guns.includes(productName)
+                || vehicles.includes(productName)
+                || productName.endsWith('barrel')
+                || singles.includes(productName)) {
+                products[productName] = 'excluded';
+            } else {
+                products[productName] = 'product';
+            }
+        }
+    }
+
     function createGraph() {
+        if(null != renderer) {
+            renderer.dispose();
+            renderer = null;
+        }
+
         var graph = Viva.Graph.graph();
 
         recipes.forEach(function(item) {
-            Object.keys(item.produces).forEach(function(productName) {
+            for(productName in item.produces) {
+                initializeProduct(productName);
+                if(products[productName] === 'excluded') {
+                    continue;
+                }
                 graph.addNode(productName, productName);
-                Object.keys(item.ingredients).forEach(function(ingredientName) {
+                for(ingredientName in item.ingredients) {
+                    initializeProduct(ingredientName);
+                    if(products[ingredientName] === 'excluded') {
+                        continue;
+                    }
+                    products[ingredientName] = 'ingredient';
                     graph.addNode(ingredientName, ingredientName);
                     graph.addLink(ingredientName, productName, item.ingredients[ingredientName]);
-                });
-            });
+                };
+            };
         });
 
         var graphics = Viva.Graph.View.svgGraphics();
@@ -58,7 +103,7 @@
         defs.append(marker);
 
         var layout = Viva.Graph.Layout.forceDirected(graph, {
-            springLength : 100,
+            springLength : 200,
             springCoeff : 0.00005,
             dragCoeff : 0.01,
             gravity : -2.2
@@ -72,6 +117,24 @@
         }
         );
         renderer.run();
+
+        const selections = document.getElementById('selections');
+        selections.innerHTML = '';
+        Object.keys(products).forEach(function(productName) {
+            if(products[productName] !== 'ingredient') {
+                const productDiv = document.createElement('div');
+                const productSelector = document.createElement('input');
+                productSelector.type = 'checkbox';
+                productSelector['data-product'] = productName;
+                productSelector.onclick = handleProductSelection;
+                productSelector.defaultChecked = (products[productName] !== 'excluded');
+                productDiv.appendChild(productSelector);
+                const productLabel = document.createElement('label');
+                productLabel.innerText = productName;
+                productDiv.appendChild(productLabel);
+                selections.appendChild(productDiv);
+            }
+        });
     }
 
     function handlePauseResumeClick(button) {
@@ -87,6 +150,7 @@
 </head>
 <body onload="createGraph()">
     <div style="display: flex; flex-direction: row; width: 100%; height: 100vh; overflow: hidden;">
+        <div style="flex: 1; overflow: auto; height: auto;" id="selections"></div>
         <div style="flex: 6; display: flex; flex-direction: column">
             <div style="flex: 1;">
                 <input type="button" onclick="handlePauseResumeClick(this)" value="Pause"/>

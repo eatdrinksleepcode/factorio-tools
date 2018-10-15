@@ -10,7 +10,7 @@
 
     const guns = ['pistol', 'submachine-gun', 'shotgun', 'combat-shotgun', 'railgun', 'rocket-launcher', 'flamethrower'];
     const vehicles = ['car', 'tank', 'locomotive', 'fluid-wagon', 'cargo-wagon'];
-    const singles = ['rocket-silo', 'resource-monitor', 'small-plane']
+    const limited = ['rocket-silo', 'resource-monitor', 'small-plane', 'oil-refinery', 'lab']
 
     function handleProductSelection(selector) {
         const productName = selector.target['data-product'];
@@ -26,7 +26,7 @@
                 || guns.includes(productName)
                 || vehicles.includes(productName)
                 || productName.endsWith('barrel')
-                || singles.includes(productName)) {
+                || limited.includes(productName)) {
                 product.isExcluded = true;
             }
             products[productName] = product;

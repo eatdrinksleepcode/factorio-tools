@@ -33,6 +33,15 @@
         }
     }
 
+    function makeExpansiveProductsTransparent(ingredientName) {
+        if(ingredientName === 'iron-gear-wheel') {
+            ingredientName = 'iron-plate';
+        } else if(ingredientName === 'copper-cable') {
+            ingredientName = 'copper-plate';
+        }
+        return ingredientName;
+    }
+
     function createGraph() {
         if(null != renderer) {
             renderer.dispose();
@@ -49,6 +58,7 @@
                 }
                 graph.addNode(productName, productName);
                 for(ingredientName in item.ingredients) {
+                    ingredientName = makeExpansiveProductsTransparent(ingredientName);
                     initializeProduct(ingredientName);
                     products[ingredientName].isIngredient = true;
                     if(products[ingredientName].isExcluded) {

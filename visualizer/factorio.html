@@ -3,12 +3,6 @@
 <script src="vivagraph.js"></script>
 <script src="recipes.json"></script>
 <script>
-    function addLinks(graph, from, to) {
-        from.forEach(function(item) {
-            graph.addLink(item, to);
-        });
-    }
-
     function createGraph() {
         var graph = Viva.Graph.graph();
 

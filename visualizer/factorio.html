@@ -1,0 +1,54 @@
+<html>
+<head>
+<script src="vivagraph.js"></script>
+<script src="recipes.json"></script>
+<script>
+    function addLinks(graph, from, to) {
+        from.forEach(function(item) {
+            graph.addLink(item, to);
+        });
+    }
+
+    function createGraph() {
+        var graph = Viva.Graph.graph();
+
+        recipes.forEach(function(item) {
+            Object.keys(item.produces).forEach(function(productName) {
+                graph.addNode(productName, productName);
+                Object.keys(item.ingredients).forEach(function(ingredientName) {
+                    graph.addNode(ingredientName, ingredientName);
+                    graph.addLink(ingredientName, productName, item.ingredients[ingredientName]);
+                });
+            });
+        });
+
+        var graphics = Viva.Graph.View.svgGraphics();
+
+        graphics
+            .node(function(node) {
+                return Viva.Graph.svg('text')
+                    .text(node.data);
+            });
+
+        var layout = Viva.Graph.Layout.forceDirected(graph, {
+            springLength : 100,
+            springCoeff : 0.00005,
+            dragCoeff : 0.01,
+            gravity : -2.2
+        });
+
+        var renderer = Viva.Graph.View.renderer(graph,
+        {
+            container: document.getElementById('graphDiv'),
+            graphics: graphics,
+            layout: layout
+        }
+        );
+        renderer.run();
+    }
+    </script>
+</head>
+<body onload="createGraph()">
+    <svg height="1000" width="1000" id="graphDiv"></svg>
+</body>
+</html>

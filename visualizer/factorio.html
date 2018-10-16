@@ -44,7 +44,8 @@
             if(productName.endsWith('equipment')
                 || productName.includes('armor')
                 || exclusionsList.includes(productName)
-                || productName.endsWith('barrel')) {
+                || productName.endsWith('barrel')
+                || productName === 'water') {
                 product.isExcluded = true;
             }
             products[productName] = product;

@@ -1,0 +1,62 @@
+<html>
+<head>
+<script src="vivagraph.js"></script>
+<script src="utils.js"></script>
+<script src="recipes.json"></script>
+<script src="items.js"></script>
+<script>
+    function runTests() {
+        testReduceRecipes();
+    }
+
+    function isObject(obj) {
+        return obj === Object(obj);
+    }
+
+    function print(obj) {
+        if(isObject(obj)) {
+            return JSON.stringify(obj);
+        } else {
+            return obj;
+        }
+    }
+
+    function assertValue(actual, expected, path) {
+        if(isObject(expected)) {
+            assertEqual(actual, expected, path);
+        } else {
+            console.assert(actual === expected, path + ": '" + print(actual) + "' != '" + print(expected) + "'");
+        }
+    }
+
+    function assertEqual(actual, expected, path) {
+        Object.keys(expected).forEach(key => {
+            const expectedValue = expected[key];
+            const actualValue = actual[key];
+            assertValue(actualValue, expectedValue, [path || "", key].join("."));
+        });
+    }
+
+    function testReduceRecipes() {
+        const products = new ItemList(recipes).items;
+
+        assertEqual(products['iron-plate'], { name: 'iron-plate', displayName: 'iron-plate', /*ingredients: { 'iron-ore': 1 } */});
+        assertEqual(products['transport-belt'], { name: 'transport-belt', displayName: 'transport-belt', ingredients: { 'iron-plate-transport': 1, 'iron-gear-wheel-transport': 1 } })
+        assertEqual(products['iron-gear-wheel-transport'], { name: 'iron-gear-wheel', displayName: 'iron-gear-wheel-transport', ingredients: { 'iron-plate-transport': 2 } })
+        assertEqual(products['iron-plate-transport'], { name: 'iron-plate', displayName: 'iron-plate-transport'/*, ingredients: { 'iron-ore': 1 } */})
+    }
+
+</script>
+</head>
+<body onload="runTests()">
+    <div style="display: flex; flex-direction: row; width: 100%; height: 100vh; overflow: hidden;">
+        <div style="flex: 1; overflow: auto; height: auto;" id="selections"></div>
+        <div style="flex: 6; display: flex; flex-direction: column">
+            <div style="flex: 1;">
+                <input type="button" onclick="handlePauseResumeClick(this)" value="Pause"/>
+            </div>
+            <svg style="flex: 8; overflow: auto; height: auto" id="graphDiv"></svg>
+        </div>
+    </div>
+</body>
+</html>

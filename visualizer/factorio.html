@@ -1,56 +1,19 @@
 <html>
 <head>
 <script src="vivagraph.js"></script>
+<script src="utils.js"></script>
 <script src="recipes.json"></script>
+<script src="items.js"></script>
 <script>
 
     var renderer = null;
 
-    const products = {};
-
-    const exclusions = {
-        guns: ['pistol', 'submachine-gun', 'shotgun', 'combat-shotgun', 'railgun', 'rocket-launcher', 'flamethrower'],
-        vehicles: ['car', 'tank', 'locomotive', 'fluid-wagon', 'cargo-wagon', 'artillery-wagon'],
-        limited: ['rocket-silo', 'resource-monitor', 'small-plane', 'oil-refinery', 'lab'],
-        editor: ['player-port', 'loader', 'fast-loader', 'express-loader']
-    };
-
-    function flatten(iterable) {
-        const results = [];
-        iterateValues(iterable, x => iterateValues(x, y => results.push(y)));
-        return results;
-    }
-
-    function iterateValues(iterable, valueFunc) {
-        if(Array.isArray(iterable)) {
-            iterable.forEach(valueFunc);
-        } else {
-            for(key in iterable) {
-                valueFunc(iterable[key]);
-            }
-        }
-    }
-
-    const exclusionsList = flatten(exclusions);
+    const products = new ItemList(recipes).items;
 
     function handleProductSelection(selector) {
         const productName = selector.target['data-product'];
-        products[productName].isExcluded = !selector.target.checked;
+        products[productName].isIncluded = selector.target.checked;
         createGraph();
-    }
-
-    function initializeProduct(productName) {
-        if(!(productName in products)) {
-            const product = { isExcluded: false, isIngredient: false };
-            if(productName.endsWith('equipment')
-                || productName.includes('armor')
-                || exclusionsList.includes(productName)
-                || productName.endsWith('barrel')
-                || productName === 'water') {
-                product.isExcluded = true;
-            }
-            products[productName] = product;
-        }
     }
 
     function makeExpansiveProductsTransparent(ingredientName) {
@@ -70,32 +33,28 @@
 
         var graph = Viva.Graph.graph();
 
-        recipes.forEach(function(item) {
-            for(productName in item.produces) {
-                initializeProduct(productName);
-                if(products[productName].isExcluded) {
+        for(productName in products) {
+            const product = products[productName];
+            if(!product.isIncluded) {
+                continue;
+            }
+            graph.addNode(productName, product);
+            for(ingredientName in product.ingredients) {
+                // ingredientName = makeExpansiveProductsTransparent(ingredientName);
+                if(!products[ingredientName].isIncluded) {
                     continue;
                 }
-                graph.addNode(productName, productName);
-                for(ingredientName in item.ingredients) {
-                    ingredientName = makeExpansiveProductsTransparent(ingredientName);
-                    initializeProduct(ingredientName);
-                    products[ingredientName].isIngredient = true;
-                    if(products[ingredientName].isExcluded) {
-                        continue;
-                    }
-                    graph.addNode(ingredientName, ingredientName);
-                    graph.addLink(ingredientName, productName, item.ingredients[ingredientName]);
-                };
+                graph.addNode(ingredientName, products[ingredientName]);
+                graph.addLink(ingredientName, productName, product.ingredients[ingredientName]);
             };
-        });
+        };
 
         var graphics = Viva.Graph.View.svgGraphics();
 
         graphics
             .node(function(node) {
                 return Viva.Graph.svg('text')
-                    .text(node.data);
+                    .text(node.data.displayName);
             });
 
         graphics.link(function(link){
@@ -130,9 +89,9 @@
 
         var layout = Viva.Graph.Layout.forceDirected(graph, {
             springLength : 200,
-            springCoeff : 0.00005,
-            dragCoeff : 0.01,
-            gravity : -2.2
+            springCoeff : 0.00020,
+            dragCoeff : 0.002,
+            gravity : -3.2
         });
 
         renderer = Viva.Graph.View.renderer(graph,
@@ -146,22 +105,22 @@
 
         const selections = document.getElementById('selections');
         selections.innerHTML = '';
-        for(productName in products) {
+        Object.keys(products).sort().forEach(function(productName) {
             const product = products[productName];
-            if(!product.isIngredient) {
+            if(!product.isExcluded && Object.keys(product.ingredients).every(ingredientName => products[ingredientName].isIncluded)) {
                 const productDiv = document.createElement('div');
                 const productSelector = document.createElement('input');
                 productSelector.type = 'checkbox';
                 productSelector['data-product'] = productName;
                 productSelector.onclick = handleProductSelection;
-                productSelector.defaultChecked = !product.isExcluded;
+                productSelector.defaultChecked = product.isIncluded;
                 productDiv.appendChild(productSelector);
                 const productLabel = document.createElement('label');
                 productLabel.innerText = productName;
                 productDiv.appendChild(productLabel);
                 selections.appendChild(productDiv);
             }
-        };
+        });
     }
 
     function handlePauseResumeClick(button) {

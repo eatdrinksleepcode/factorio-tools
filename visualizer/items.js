@@ -30,11 +30,8 @@ const excludedRecipesList = ['coal-liquefaction'];
 const groups = {
     common: [
         'science-pack-1',
-
-        'engine-unit',
-
-        'firearm-magazine',
-        'piercing-rounds-magazine',
+        'science-pack-3',
+        'military-science-pack',
     ],
     oil: [
         'heavy-oil',
@@ -164,24 +161,35 @@ class ItemList {
     }
     
     mapProductRecipe(recipe, targetGroupName) {
+        const displayName = this.makeItemName(recipe.productName, targetGroupName);
+        var item = this.items[displayName];
+        if(item) {
+            return item;
+        }
         const groupName = groupsByProduct[recipe.productName] || targetGroupName;
         const isIncluded = groupName || this.allBasics.includes(recipe.productName);
         const isExcluded = matchesExclusionPattern(recipe.productName);
-        const item = {
+        item = {
             originalRecipe: recipe.originalRecipe,
             name: recipe.productName,
-            displayName: this.makeItemName(recipe.productName, targetGroupName),
+            displayName,
             groupName,
             isIncluded,
             isExcluded,
             ingredients: isExcluded ? {} : this.mapIngredients(recipe, groupName),
         };
         if(item.isIncluded) {
-            Object.keys(item.ingredients).forEach(ingredientName => {
-                this.items[ingredientName].isIncluded = true;
-            });
+            this.includeAllIngredients(item);
         }
         return item;
+    }
+
+    includeAllIngredients(item) {
+        Object.keys(item.ingredients).forEach(ingredientName => {
+            const ingredientItem = this.items[ingredientName];
+            ingredientItem.isIncluded = true;
+            this.includeAllIngredients(ingredientItem);
+        });
     }
 
     mapIngredients(recipe, groupName) {

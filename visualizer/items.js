@@ -60,6 +60,7 @@ const fusionRecipes = [
     {
         "name": "iron-plate-and-gear-wheel",
         "seconds": 0,
+        "isFusion": true,
         "produces": {
             "iron-plate-and-gear-wheel": 1
         },
@@ -86,21 +87,14 @@ function matchesExclusionPattern(name) {
     return false;
 }
 
-function makeItemName(baseName, groupName) {
-    if(groupName && basics.includes(baseName)) {
-        return [baseName, groupName].filter(x => x).join("-");
-    }
-    return baseName;
-}
-
 function splitRecipesByProduct(recipes) {
     return recipes.filter(recipe => !excludedRecipesList.includes(recipe.name)).map(recipe => {
         return Object.keys(recipe.produces).map(productName => {
             return {
-                recipe,
+                originalRecipe: recipe,
                 productName,
                 quantity: recipe.produces[productName],
-                ingredients: recipe.ingredients,
+                ingredients: { ...recipe.ingredients },
             };
         });
     })
@@ -115,8 +109,20 @@ class ItemList {
     constructor(recipes) {
         this.recipes = recipes;
         this.recipesByProduct = splitRecipesByProduct(recipes);
+        this.fusionRecipesByProduct = splitRecipesByProduct(fusionRecipes);
         this.items = {};
+        this.allBasics = basics;
+        this.reduceFusionRecipes();
+        this.allBasics = basics.concat(Object.keys(this.fusionRecipesByProduct)); // HACK: this only works if all fusion recipes are for basic products
         this.reduceRecipes();
+    }
+
+    reduceFusionRecipes() {
+        Object.values(this.fusionRecipesByProduct).forEach(recipe => {
+            const item = this.mapProductRecipe(recipe);
+            item.isFusion = true;
+            this.items[item.displayName] = item;
+        });
     }
 
     reduceRecipes() {
@@ -126,11 +132,22 @@ class ItemList {
         });
     }
 
+    makeItemName(baseName, groupName) {
+        if(groupName && this.allBasics.includes(baseName)) {
+            return [baseName, groupName].filter(x => x).join("-");
+        }
+        return baseName;
+    }
+
+    findRecipe(productName) {
+        return this.recipesByProduct[productName] || this.fusionRecipesByProduct[productName];
+    }
+    
     mapProductRecipeName(productName, groupName) {
-        const displayName = makeItemName(productName, groupName);
+        const displayName = this.makeItemName(productName, groupName);
         var result = this.items[displayName];
         if(!result) {
-            const recipe = this.recipesByProduct[productName];
+            const recipe = this.findRecipe(productName);
             if(!recipe) {
                 result = {
                     name: productName,
@@ -148,12 +165,12 @@ class ItemList {
     
     mapProductRecipe(recipe, targetGroupName) {
         const groupName = groupsByProduct[recipe.productName] || targetGroupName;
-        const isIncluded = groupName || basics.includes(recipe.productName);
+        const isIncluded = groupName || this.allBasics.includes(recipe.productName);
         const isExcluded = matchesExclusionPattern(recipe.productName);
         const item = {
-            recipe: recipe.recipe,
+            originalRecipe: recipe.originalRecipe,
             name: recipe.productName,
-            displayName: makeItemName(recipe.productName, targetGroupName),
+            displayName: this.makeItemName(recipe.productName, targetGroupName),
             groupName,
             isIncluded,
             isExcluded,
@@ -168,6 +185,19 @@ class ItemList {
     }
 
     mapIngredients(recipe, groupName) {
+        const ingredients = recipe.ingredients;
+        if(!recipe.originalRecipe.isFusion && groupName) {
+            fusionRecipes.forEach(fusion => {
+                if(Object.keys(fusion.ingredients).every(fusionIngredientName => ingredients.hasOwnProperty(fusionIngredientName))) {
+                    Object.keys(fusion.ingredients).forEach(fusionIngredientName => {
+                        delete ingredients[fusionIngredientName];
+                    });
+                    Object.keys(fusion.produces).forEach(fusionProductName => {
+                        ingredients[fusionProductName] = fusion.produces[fusionProductName];
+                    });
+                }
+            });
+        }
         return Object.entries(recipe.ingredients).filter(([ingredientName]) => ingredientName !== recipe.productName).reduce((ingredients, [ingredientName, ingredientQuantity]) => {
             const ingredient = this.mapProductRecipeName(ingredientName, groupName);
             if(!ingredient.isExcluded) {

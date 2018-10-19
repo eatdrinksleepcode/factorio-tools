@@ -41,9 +41,11 @@
         const products = new ItemList(recipes).items;
 
         assertEqual(products['iron-plate'], { name: 'iron-plate', displayName: 'iron-plate', /*ingredients: { 'iron-ore': 1 } */});
-        assertEqual(products['transport-belt'], { name: 'transport-belt', displayName: 'transport-belt', ingredients: { 'iron-plate-transport': 1, 'iron-gear-wheel-transport': 1 } })
-        assertEqual(products['iron-gear-wheel-transport'], { name: 'iron-gear-wheel', displayName: 'iron-gear-wheel-transport', ingredients: { 'iron-plate-transport': 2 } })
-        assertEqual(products['iron-plate-transport'], { name: 'iron-plate', displayName: 'iron-plate-transport'/*, ingredients: { 'iron-ore': 1 } */})
+        assertEqual(products['transport-belt'], { name: 'transport-belt', displayName: 'transport-belt', ingredients: { 'iron-plate-and-gear-wheel-transport': 1 } });
+        assertEqual(products['iron-plate-and-gear-wheel-transport'], { name: 'iron-plate-and-gear-wheel', displayName: 'iron-plate-and-gear-wheel-transport', ingredients: { 'iron-plate-transport': 1, 'iron-gear-wheel-transport': 1 } });
+        assertEqual(products['iron-gear-wheel-transport'], { name: 'iron-gear-wheel', displayName: 'iron-gear-wheel-transport', ingredients: { 'iron-plate-transport': 2 } });
+        assertEqual(products['iron-plate-transport'], { name: 'iron-plate', displayName: 'iron-plate-transport'/*, ingredients: { 'iron-ore': 1 } */});
+        assertEqual(products['electric-mining-drill'], { name: 'electric-mining-drill', displayName: 'electric-mining-drill', ingredients: { 'electronic-circuit': 3, 'iron-plate': 10, 'iron-gear-wheel': 5 } });
     }
 
 </script>

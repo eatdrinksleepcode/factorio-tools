@@ -49,6 +49,7 @@ const groups = {
         'stack-filter-inserter',
 
         'transport-belt',
+        'fast-transport-belt',
 
         'science-pack-2',
     ],

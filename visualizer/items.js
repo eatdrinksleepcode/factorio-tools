@@ -14,13 +14,14 @@ const basics = [
 
     'steam',
 
-    'electronic-circuit'];
+    'electronic-circuit',
+];
 
 const exclusions = {
     guns: ['pistol', 'submachine-gun', 'shotgun', 'combat-shotgun', 'railgun', 'rocket-launcher', 'flamethrower'],
     vehicles: ['car', 'tank', 'locomotive', 'fluid-wagon', 'cargo-wagon', 'artillery-wagon'],
     limited: ['rocket-silo', 'resource-monitor', 'small-plane', 'oil-refinery', 'lab'],
-    editor: ['player-port', 'loader', 'fast-loader', 'express-loader']
+    editor: ['player-port', 'loader', 'fast-loader', 'express-loader'],
 };
 
 const exclusionsList = flatten(exclusions);
@@ -139,7 +140,7 @@ class ItemList {
     findRecipe(productName) {
         return this.recipesByProduct[productName] || this.fusionRecipesByProduct[productName];
     }
-    
+
     mapProductRecipeName(productName, groupName) {
         const displayName = this.makeItemName(productName, groupName);
         var result = this.items[displayName];
@@ -159,7 +160,7 @@ class ItemList {
         }
         return result;
     }
-    
+
     mapProductRecipe(recipe, targetGroupName) {
         const displayName = this.makeItemName(recipe.productName, targetGroupName);
         var item = this.items[displayName];

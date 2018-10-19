@@ -51,11 +51,29 @@
 
         var graphics = Viva.Graph.View.svgGraphics();
 
+        const nodeSize = 32;
         graphics
             .node(function(node) {
-                return Viva.Graph.svg('text')
-                    .text(node.data.displayName);
+                const nodeGroup = Viva.Graph.svg('g');
+                const imgName = node.data.name.replace(/-/g, '_').replace(/^\S/g, x => x.toUpperCase());
+                const nodeTitle = Viva.Graph.svg('title').text(node.data.name);
+                const nodeImg = Viva.Graph.svg('image')
+                    .attr('x', -nodeSize / 2)
+                    .attr('y', -nodeSize / 2)
+                    .attr('width', nodeSize)
+                    .attr('height', nodeSize)
+                    .link('https://wiki.factorio.com/images/' + imgName + '.png');
+                nodeGroup.append(nodeTitle);
+                nodeGroup.append(nodeImg);
+                return nodeGroup;
+            }).placeNode(function(nodeUI, pos) {
+                nodeUI.attr('transform',
+                            'translate(' +
+                                  (pos.x) + ',' + (pos.y) +
+                            ')');
             });
+
+        var geom = Viva.Graph.geom();
 
         graphics.link(function(link){
             // Notice the Triangle marker-end attribe:
@@ -63,8 +81,29 @@
                         .attr('stroke', 'gray')
                         .attr('marker-end', 'url(#Triangle)');
         }).placeLink(function(linkUI, fromPos, toPos) {
-            var data = 'M' + fromPos.x + ',' + fromPos.y +
-                        'L' + toPos.x + ',' + toPos.y;
+            var toNodeSize = nodeSize,
+                    fromNodeSize = nodeSize;
+            var from = geom.intersectRect(
+                    // rectangle:
+                            fromPos.x - fromNodeSize / 2, // left
+                            fromPos.y - fromNodeSize / 2, // top
+                            fromPos.x + fromNodeSize / 2, // right
+                            fromPos.y + fromNodeSize / 2, // bottom
+                    // segment:
+                            fromPos.x, fromPos.y, toPos.x, toPos.y)
+                        || fromPos; // if no intersection found - return center of the node
+            var to = geom.intersectRect(
+                    // rectangle:
+                            toPos.x - toNodeSize / 2, // left
+                            toPos.y - toNodeSize / 2, // top
+                            toPos.x + toNodeSize / 2, // right
+                            toPos.y + toNodeSize / 2, // bottom
+                    // segment:
+                            toPos.x, toPos.y, fromPos.x, fromPos.y)
+                        || toPos; // if no intersection found - return center of the node
+                        
+            var data = 'M' + from.x + ',' + from.y +
+                       'L' + to.x + ',' + to.y;
             linkUI.attr("d", data);
         });
 

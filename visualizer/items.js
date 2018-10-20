@@ -66,7 +66,11 @@ const fusionRecipes = [
         "ingredients": {
             "iron-plate": 1,
             "iron-gear-wheel": 1,
-        }
+        },
+        "images": [
+            "iron-plate",
+            "iron-gear-wheel",
+        ],
     },
 ];
 

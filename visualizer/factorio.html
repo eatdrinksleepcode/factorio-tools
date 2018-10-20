@@ -55,14 +55,20 @@
         graphics
             .node(function(node) {
                 const nodeGroup = Viva.Graph.svg('g');
-                const imgName = node.data.name.replace(/-/g, '_').replace(/^\S/g, x => x.toUpperCase());
+                const images = node.data.originalRecipe.images || [node.data.name];
+                const nodeImg = Viva.Graph.svg('g');
+                const totalNodeSize = nodeSize * images.length;
+                images.forEach((imgName, index) => {
+                    const imgFileName = imgName.replace(/-/g, '_').replace(/^\S/g, x => x.toUpperCase());
+                    const subImg = Viva.Graph.svg('image')
+                        .attr('x', -(totalNodeSize / 2) + (nodeSize * index))
+                        .attr('y', -nodeSize / 2)
+                        .attr('width', nodeSize)
+                        .attr('height', nodeSize)
+                        .link('https://wiki.factorio.com/images/' + imgFileName + '.png');
+                    nodeImg.append(subImg);
+                });
                 const nodeTitle = Viva.Graph.svg('title').text(node.data.name);
-                const nodeImg = Viva.Graph.svg('image')
-                    .attr('x', -nodeSize / 2)
-                    .attr('y', -nodeSize / 2)
-                    .attr('width', nodeSize)
-                    .attr('height', nodeSize)
-                    .link('https://wiki.factorio.com/images/' + imgName + '.png');
                 nodeGroup.append(nodeTitle);
                 nodeGroup.append(nodeImg);
                 return nodeGroup;

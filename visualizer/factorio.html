@@ -10,6 +10,10 @@
 
     const products = new ItemList(recipes).items;
 
+    const imageOverrides = {
+        rail: 'straight-rail',
+    }
+
     function handleProductSelection(selector) {
         const productName = selector.target['data-product'];
         products[productName].isIncluded = selector.target.checked;
@@ -59,7 +63,8 @@
                 const nodeImg = Viva.Graph.svg('g');
                 const totalNodeSize = nodeSize * images.length;
                 images.forEach((imgName, index) => {
-                    const imgFileName = imgName.replace(/-/g, '_').replace(/^\S/g, x => x.toUpperCase());
+                    const finalImgName = imageOverrides[imgName] || imgName;
+                    const imgFileName = finalImgName.replace(/-/g, '_').replace(/^\S/g, x => x.toUpperCase());
                     const subImg = Viva.Graph.svg('image')
                         .attr('x', -(totalNodeSize / 2) + (nodeSize * index))
                         .attr('y', -nodeSize / 2)

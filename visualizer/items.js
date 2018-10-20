@@ -79,12 +79,14 @@ const groups = {
         'electric-engine-unit',
         'electric-furnace',
         'production-science-pack',
-    // ],
-    // robots: [
+
         'roboport',
         'flying-robot-frame',
         'construction-robot',
         'logistic-robot',
+
+        'iron-stick',
+        'rail',
     ],
     'high-tech': [
         'processing-unit',

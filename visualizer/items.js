@@ -21,7 +21,6 @@ const basics = [
     'plastic-bar',
 
     'lubricant',
-    'sulfuric-acid',
 ];
 
 const exclusions = {
@@ -71,7 +70,6 @@ const groups = {
     ],
     power: [
         'accumulator',
-        'solar-panel',
     ],
     production: [
         'electric-engine-unit',
@@ -90,6 +88,8 @@ const groups = {
         'high-tech-science-pack',
     ],
 };
+
+const included = ['solar-panel'];
 
 const fusionRecipes = [
     {
@@ -242,7 +242,7 @@ class ItemList {
             return item;
         }
         const groupName = groupsByProduct[recipe.productName] || targetGroupName;
-        const isIncluded = groupName || false;
+        const isIncluded = groupName || included.includes(recipe.productName);
         const isExcluded = matchesExclusionPattern(recipe.productName);
         item = {
             originalRecipe: recipe.originalRecipe,

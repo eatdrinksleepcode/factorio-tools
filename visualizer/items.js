@@ -21,6 +21,7 @@ const basics = [
     'plastic-bar',
 
     'lubricant',
+    'sulfuric-acid',
 ];
 
 const exclusions = {
@@ -83,6 +84,11 @@ const groups = {
         'construction-robot',
         'logistic-robot',
     ],
+    'high-tech': [
+        'processing-unit',
+        'speed-module',
+        'high-tech-science-pack',
+    ],
 };
 
 const fusionRecipes = [
@@ -117,7 +123,7 @@ const comboRecipes = [
             "science-pack-3": 1,
             "military-science-pack": 1,
             "production-science-pack": 1,
-            // "high-tech-science-pack": 1,
+            "high-tech-science-pack": 1,
         },
         "images": [
             "lab"

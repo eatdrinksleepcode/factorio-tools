@@ -32,7 +32,6 @@ const groups = {
     common: [
         'science-pack-1',
         'science-pack-3',
-        'military-science-pack',
     ],
     oil: [
         'heavy-oil',
@@ -52,6 +51,12 @@ const groups = {
         'fast-transport-belt',
 
         'science-pack-2',
+    ],
+    military: [
+        'gun-turret',
+        'grenade',
+        'piercing-rounds-magazine',
+        'military-science-pack',
     ],
 };
 

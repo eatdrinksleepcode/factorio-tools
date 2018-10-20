@@ -57,6 +57,10 @@ const groups = {
         'fast-underground-belt',
         'express-underground-belt',
 
+        'splitter',
+        'fast-splitter',
+        'express-splitter',
+
         'science-pack-2',
     ],
     first: [
@@ -86,10 +90,18 @@ const groups = {
         'processing-unit',
         'speed-module',
         'high-tech-science-pack',
+        'assembling-machine-1',
+        'assembling-machine-2',
+        'assembling-machine-3',
+    ],
+    'rocket-launch': [
+        'solar-panel',
+        'radar',
+        'low-density-structure',
     ],
 };
 
-const included = ['solar-panel'];
+const included = ['solar-panel', 'pipe-to-ground', 'stone-wall'];
 
 const fusionRecipes = [
     {

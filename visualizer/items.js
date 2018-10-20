@@ -103,7 +103,7 @@ const groups = {
     ],
 };
 
-const included = ['solar-panel', 'pipe-to-ground', 'stone-wall'];
+const included = ['solar-panel', 'pipe-to-ground', 'stone-wall', 'substation', 'medium-electric-pole', 'big-electric-pole'];
 
 const fusionRecipes = [
     {

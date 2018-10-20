@@ -32,6 +32,7 @@ const groups = {
     common: [
         'science-pack-1',
         'science-pack-3',
+        'production-science-pack',
     ],
     oil: [
         'heavy-oil',
@@ -57,6 +58,11 @@ const groups = {
         'grenade',
         'piercing-rounds-magazine',
         'military-science-pack',
+    ],
+    production: [
+        'electric-engine-unit',
+        'electric-furnace',
+        'production-science-pack',
     ],
 };
 
@@ -91,7 +97,7 @@ const comboRecipes = [
             "science-pack-2": 1,
             "science-pack-3": 1,
             "military-science-pack": 1,
-            // "production-science-pack": 1,
+            "production-science-pack": 1,
             // "high-tech-science-pack": 1,
         },
         "images": [

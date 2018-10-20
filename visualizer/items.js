@@ -74,6 +74,27 @@ const fusionRecipes = [
     },
 ];
 
+const comboRecipes = [
+    {
+        "name": "research",
+        "seconds": 0,
+        "produces": {
+            "research": 1
+        },
+        "ingredients": {
+            "science-pack-1": 1,
+            "science-pack-2": 1,
+            "science-pack-3": 1,
+            "military-science-pack": 1,
+            // "production-science-pack": 1,
+            // "high-tech-science-pack": 1,
+        },
+        "images": [
+            "lab"
+        ],
+    },
+];
+
 const groupsByProduct = {};
 for(groupName in groups) {
     iterateValues(groups[groupName], product => groupsByProduct[product] = groupName);
@@ -118,6 +139,7 @@ class ItemList {
         this.reduceFusionRecipes();
         this.allBasics = basics.concat(Object.keys(this.fusionRecipesByProduct)); // HACK: this only works if all fusion recipes are for basic products
         this.reduceRecipes();
+        this.reduceComboRecipes();
     }
 
     reduceFusionRecipes() {
@@ -131,6 +153,16 @@ class ItemList {
     reduceRecipes() {
         Object.values(this.recipesByProduct).forEach(recipe => {
             const item = this.mapProductRecipe(recipe);
+            this.items[item.displayName] = item;
+        });
+    }
+
+    reduceComboRecipes() {
+        const comboRecipesByProduct = splitRecipesByProduct(comboRecipes);
+        Object.values(comboRecipesByProduct).forEach(recipe => {
+            const item = this.mapProductRecipe(recipe);
+            item.isIncluded = true;
+            this.includeAllIngredients(item);
             this.items[item.displayName] = item;
         });
     }

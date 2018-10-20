@@ -68,7 +68,11 @@
                         .link('https://wiki.factorio.com/images/' + imgFileName + '.png');
                     nodeImg.append(subImg);
                 });
-                const nodeTitle = Viva.Graph.svg('title').text(node.data.name);
+                var title = node.data.name;
+                if(node.data.groupName) {
+                    title = title + ' (' + node.data.groupName + ')';
+                }
+                const nodeTitle = Viva.Graph.svg('title').text(title);
                 nodeGroup.append(nodeTitle);
                 nodeGroup.append(nodeImg);
                 return nodeGroup;

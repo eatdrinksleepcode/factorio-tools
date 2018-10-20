@@ -129,6 +129,20 @@ const comboRecipes = [
             "lab"
         ],
     },
+    {
+        "name": "rocket-launch",
+        "seconds": 0,
+        "produces": {
+            "rocket-launch": 1,
+        },
+        "ingredients": {
+            "rocket-part": 100,
+            "satellite": 1,
+        },
+        "images": [
+            "rocket-silo",
+        ],
+    },
 ];
 
 const groupsByProduct = {};

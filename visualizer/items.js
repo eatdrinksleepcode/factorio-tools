@@ -9,15 +9,22 @@ const basics = [
     'steel-plate',
     'pipe',
 
+    'engine-unit',
+
     'copper-plate',
     'copper-cable',
 
     'steam',
 
     'electronic-circuit',
+    'advanced-circuit',
+    'plastic-bar',
+
+    'lubricant',
 ];
 
 const exclusions = {
+    ores: ['iron-ore', 'copper-ore'],
     guns: ['pistol', 'submachine-gun', 'shotgun', 'combat-shotgun', 'railgun', 'rocket-launcher', 'flamethrower'],
     vehicles: ['car', 'tank', 'locomotive', 'fluid-wagon', 'cargo-wagon', 'artillery-wagon'],
     limited: ['rocket-silo', 'resource-monitor', 'small-plane', 'oil-refinery', 'lab'],
@@ -26,19 +33,13 @@ const exclusions = {
 
 const exclusionsList = flatten(exclusions);
 
-const excludedRecipesList = ['coal-liquefaction'];
+const excludedRecipesList = ['coal-liquefaction', 'lubricant', 'plastic-bar'];
 
 const groups = {
-    common: [
-        'science-pack-1',
-        'science-pack-3',
-        'production-science-pack',
-    ],
     oil: [
         'heavy-oil',
         'light-oil',
         'petroleum-gas',
-        'plastic-bar'
     ],
     transport: [
         'inserter',
@@ -50,8 +51,16 @@ const groups = {
 
         'transport-belt',
         'fast-transport-belt',
+        'express-transport-belt',
+
+        'underground-belt',
+        'fast-underground-belt',
+        'express-underground-belt',
 
         'science-pack-2',
+    ],
+    first: [
+        'science-pack-1',
     ],
     military: [
         'gun-turret',
@@ -59,14 +68,20 @@ const groups = {
         'piercing-rounds-magazine',
         'military-science-pack',
     ],
+    power: [
+        'accumulator',
+        'solar-panel',
+    ],
     production: [
         'electric-engine-unit',
         'electric-furnace',
         'production-science-pack',
-    ],
-    power: [
-        'accumulator',
-        'solar-panel',
+    // ],
+    // robots: [
+        'roboport',
+        'flying-robot-frame',
+        'construction-robot',
+        'logistic-robot',
     ],
 };
 
@@ -203,7 +218,8 @@ class ItemList {
                     name: productName,
                     displayName,
                     ingredients: {},
-                    isExcluded: true,
+                    isExcluded: matchesExclusionPattern(productName),
+                    originalRecipe: {},
                 };
             } else {
                 result = this.mapProductRecipe(recipe, groupName);
@@ -220,7 +236,7 @@ class ItemList {
             return item;
         }
         const groupName = groupsByProduct[recipe.productName] || targetGroupName;
-        const isIncluded = groupName || this.allBasics.includes(recipe.productName);
+        const isIncluded = groupName || false;
         const isExcluded = matchesExclusionPattern(recipe.productName);
         item = {
             originalRecipe: recipe.originalRecipe,

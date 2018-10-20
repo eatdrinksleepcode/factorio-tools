@@ -64,6 +64,10 @@ const groups = {
         'electric-furnace',
         'production-science-pack',
     ],
+    power: [
+        'accumulator',
+        'solar-panel',
+    ],
 };
 
 const fusionRecipes = [

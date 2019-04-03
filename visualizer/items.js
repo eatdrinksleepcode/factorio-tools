@@ -5,22 +5,24 @@ const basics = [
     'water',
 
     'iron-plate',
-    'iron-gear-wheel',
     'steel-plate',
-    'pipe',
-
-    'engine-unit',
 
     'copper-plate',
     'copper-cable',
 
     'steam',
 
-    'electronic-circuit',
-    'advanced-circuit',
     'plastic-bar',
 
     'lubricant',
+];
+
+const expansive = [
+    'iron-gear-wheel',
+    'pipe',
+    'engine-unit',
+    'electronic-circuit',
+    'advanced-circuit',
 ];
 
 const exclusions = {
@@ -232,14 +234,14 @@ class ItemList {
     }
 
     makeItemName(baseName, groupName) {
-        if(groupName && this.allBasics.includes(baseName)) {
+        if(groupName && (this.allBasics.includes(baseName) || expansive.includes(baseName))) {
             return [baseName, groupName].filter(x => x).join("-");
         }
         return baseName;
     }
 
     findRecipe(productName) {
-        return this.recipesByProduct[productName] || this.fusionRecipesByProduct[productName];
+        return !this.allBasics.includes(productName) && this.recipesByProduct[productName] || this.fusionRecipesByProduct[productName];
     }
 
     mapProductRecipeName(productName, groupName) {

@@ -37,6 +37,14 @@
         });
     }
 
+    function assertEmpty(actual, path) {
+        if(isObject(actual)) {
+            console.assert(Object.keys(actual).length === 0, path + ": " + print(actual) + " is not empty");
+        } else {
+            throw "Unexpected actual";
+        }
+    }
+
     function testReduceRecipes() {
         const products = new ItemList(recipes).items;
 
@@ -48,6 +56,8 @@
         assertEqual(products['electric-mining-drill'], { name: 'electric-mining-drill', displayName: 'electric-mining-drill', ingredients: { 'electronic-circuit': 3, 'iron-plate': 10, 'iron-gear-wheel': 5 } });
         assertEqual(products['piercing-rounds-magazine'], { name: 'piercing-rounds-magazine', displayName: 'piercing-rounds-magazine', isIncluded: true });
         assertEqual(products['research'], { name: 'research', displayName: 'research', isIncluded: true, ingredients: { 'science-pack-1': 1, 'science-pack-2': 1, 'science-pack-3': 1 } });
+        assertEqual(products['steel-plate-military'], { name: 'steel-plate', displayName: 'steel-plate-military' });
+        assertEmpty(products['steel-plate-military'].ingredients, "steel-plate-military.ingredients");
     }
 
 </script>

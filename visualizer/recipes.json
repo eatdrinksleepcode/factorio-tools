@@ -26,7 +26,7 @@ recipes = [
 	"name": "advanced-oil-processing",
 	"seconds": 5,
 	"produces": {
-		"heavy-oil": 10,
+		"heavy-oil": 25,
 		"light-oil": 45,
 		"petroleum-gas": 55
 	},
@@ -115,7 +115,7 @@ recipes = [
 		"assembling-machine-2": 1
 	},
 	"ingredients": {
-		"iron-plate": 9,
+		"steel-plate": 2,
 		"iron-gear-wheel": 5,
 		"electronic-circuit": 3,
 		"assembling-machine-1": 1
@@ -140,17 +140,26 @@ recipes = [
 	},
 	"ingredients": {
 		"explosives": 10,
-		"processing-unit": 20,
+		"rocket-control-unit": 10,
 		"uranium-235": 30
+	}
+},
+{
+	"name": "automation-science-pack",
+	"seconds": 5,
+	"produces": {
+		"automation-science-pack": 1
+	},
+	"ingredients": {
+		"copper-plate": 1,
+		"iron-gear-wheel": 1
 	}
 },
 {
 	"name": "basic-oil-processing",
 	"seconds": 5,
 	"produces": {
-		"heavy-oil": 30,
-		"light-oil": 30,
-		"petroleum-gas": 40
+		"petroleum-gas": 45
 	},
 	"ingredients": {
 		"crude-oil": 100
@@ -158,7 +167,7 @@ recipes = [
 },
 {
 	"name": "battery",
-	"seconds": 5,
+	"seconds": 4,
 	"produces": {
 		"battery": 1
 	},
@@ -186,7 +195,8 @@ recipes = [
 		"battery-mk2-equipment": 1
 	},
 	"ingredients": {
-		"processing-unit": 20,
+		"processing-unit": 15,
+		"low-density-structure": 5,
 		"battery-equipment": 10
 	}
 },
@@ -204,6 +214,17 @@ recipes = [
 	}
 },
 {
+	"name": "belt-immunity-equipment",
+	"seconds": 10,
+	"produces": {
+		"belt-immunity-equipment": 1
+	},
+	"ingredients": {
+		"steel-plate": 10,
+		"advanced-circuit": 5
+	}
+},
+{
 	"name": "big-electric-pole",
 	"seconds": 0.5,
 	"produces": {
@@ -211,7 +232,8 @@ recipes = [
 	},
 	"ingredients": {
 		"copper-plate": 5,
-		"steel-plate": 5
+		"steel-plate": 5,
+		"iron-stick": 8
 	}
 },
 {
@@ -311,6 +333,18 @@ recipes = [
 	}
 },
 {
+	"name": "chemical-science-pack",
+	"seconds": 24,
+	"produces": {
+		"chemical-science-pack": 2
+	},
+	"ingredients": {
+		"sulfur": 1,
+		"advanced-circuit": 3,
+		"engine-unit": 2
+	}
+},
+{
 	"name": "cliff-explosives",
 	"seconds": 8,
 	"produces": {
@@ -338,9 +372,9 @@ recipes = [
 	"name": "coal-liquefaction",
 	"seconds": 5,
 	"produces": {
-		"heavy-oil": 35,
-		"light-oil": 15,
-		"petroleum-gas": 20
+		"heavy-oil": 90,
+		"light-oil": 20,
+		"petroleum-gas": 10
 	},
 	"ingredients": {
 		"coal": 10,
@@ -407,7 +441,7 @@ recipes = [
 },
 {
 	"name": "copper-plate",
-	"seconds": 3.5,
+	"seconds": 3.2,
 	"produces": {
 		"copper-plate": 1
 	},
@@ -434,8 +468,8 @@ recipes = [
 	},
 	"ingredients": {
 		"iron-gear-wheel": 3,
-		"electronic-circuit": 2,
-		"piercing-rounds-magazine": 1
+		"electronic-circuit": 3,
+		"piercing-rounds-magazine": 3
 	}
 },
 {
@@ -680,7 +714,8 @@ recipes = [
 		"energy-shield-mk2-equipment": 1
 	},
 	"ingredients": {
-		"processing-unit": 10,
+		"processing-unit": 5,
+		"low-density-structure": 5,
 		"energy-shield-equipment": 10
 	}
 },
@@ -744,7 +779,7 @@ recipes = [
 },
 {
 	"name": "explosives",
-	"seconds": 5,
+	"seconds": 4,
 	"produces": {
 		"explosives": 2
 	},
@@ -976,8 +1011,7 @@ recipes = [
 	},
 	"ingredients": {
 		"steel-plate": 5,
-		"light-oil": 50,
-		"heavy-oil": 50
+		"crude-oil": 100
 	}
 },
 {
@@ -1026,7 +1060,8 @@ recipes = [
 		"fusion-reactor-equipment": 1
 	},
 	"ingredients": {
-		"processing-unit": 250
+		"processing-unit": 200,
+		"low-density-structure": 50
 	}
 },
 {
@@ -1121,26 +1156,13 @@ recipes = [
 },
 {
 	"name": "heavy-oil-cracking",
-	"seconds": 3,
+	"seconds": 2,
 	"produces": {
 		"light-oil": 30
 	},
 	"ingredients": {
 		"water": 30,
 		"heavy-oil": 40
-	}
-},
-{
-	"name": "high-tech-science-pack",
-	"seconds": 14,
-	"produces": {
-		"high-tech-science-pack": 2
-	},
-	"ingredients": {
-		"battery": 1,
-		"copper-cable": 30,
-		"processing-unit": 3,
-		"speed-module": 1
 	}
 },
 {
@@ -1153,17 +1175,6 @@ recipes = [
 		"iron-plate": 1,
 		"iron-gear-wheel": 1,
 		"electronic-circuit": 1
-	}
-},
-{
-	"name": "iron-axe",
-	"seconds": 0.5,
-	"produces": {
-		"iron-axe": 1
-	},
-	"ingredients": {
-		"iron-plate": 3,
-		"iron-stick": 2
 	}
 },
 {
@@ -1188,7 +1199,7 @@ recipes = [
 },
 {
 	"name": "iron-plate",
-	"seconds": 3.5,
+	"seconds": 3.2,
 	"produces": {
 		"iron-plate": 1
 	},
@@ -1208,7 +1219,7 @@ recipes = [
 },
 {
 	"name": "kovarex-enrichment-process",
-	"seconds": 50,
+	"seconds": 60,
 	"produces": {
 		"uranium-235": 41,
 		"uranium-238": 2
@@ -1275,7 +1286,7 @@ recipes = [
 },
 {
 	"name": "light-oil-cracking",
-	"seconds": 3,
+	"seconds": 2,
 	"produces": {
 		"petroleum-gas": 20
 	},
@@ -1382,6 +1393,17 @@ recipes = [
 	}
 },
 {
+	"name": "logistic-science-pack",
+	"seconds": 6,
+	"produces": {
+		"logistic-science-pack": 1
+	},
+	"ingredients": {
+		"transport-belt": 1,
+		"inserter": 1
+	}
+},
+{
 	"name": "long-handed-inserter",
 	"seconds": 0.5,
 	"produces": {
@@ -1395,13 +1417,13 @@ recipes = [
 },
 {
 	"name": "low-density-structure",
-	"seconds": 30,
+	"seconds": 20,
 	"produces": {
 		"low-density-structure": 1
 	},
 	"ingredients": {
-		"copper-plate": 5,
-		"steel-plate": 10,
+		"copper-plate": 20,
+		"steel-plate": 2,
 		"plastic-bar": 5
 	}
 },
@@ -1423,7 +1445,8 @@ recipes = [
 	},
 	"ingredients": {
 		"copper-plate": 2,
-		"steel-plate": 2
+		"steel-plate": 2,
+		"iron-stick": 4
 	}
 },
 {
@@ -1435,7 +1458,7 @@ recipes = [
 	"ingredients": {
 		"piercing-rounds-magazine": 1,
 		"grenade": 1,
-		"gun-turret": 1
+		"stone-wall": 2
 	}
 },
 {
@@ -1462,7 +1485,7 @@ recipes = [
 },
 {
 	"name": "nuclear-fuel",
-	"seconds": 60,
+	"seconds": 90,
 	"produces": {
 		"nuclear-fuel": 1
 	},
@@ -1473,7 +1496,7 @@ recipes = [
 },
 {
 	"name": "nuclear-fuel-reprocessing",
-	"seconds": 50,
+	"seconds": 60,
 	"produces": {
 		"uranium-238": 3
 	},
@@ -1527,8 +1550,8 @@ recipes = [
 		"personal-laser-defense-equipment": 1
 	},
 	"ingredients": {
-		"steel-plate": 5,
-		"processing-unit": 1,
+		"processing-unit": 20,
+		"low-density-structure": 5,
 		"laser-turret": 5
 	}
 },
@@ -1553,6 +1576,7 @@ recipes = [
 	},
 	"ingredients": {
 		"processing-unit": 100,
+		"low-density-structure": 20,
 		"personal-roboport-equipment": 5
 	}
 },
@@ -1666,10 +1690,11 @@ recipes = [
 		"power-armor-mk2": 1
 	},
 	"ingredients": {
-		"steel-plate": 40,
-		"processing-unit": 40,
-		"speed-module-3": 5,
-		"effectivity-module-3": 5
+		"processing-unit": 60,
+		"electric-engine-unit": 40,
+		"low-density-structure": 30,
+		"speed-module-2": 25,
+		"effectivity-module-2": 25
 	}
 },
 {
@@ -1698,13 +1723,14 @@ recipes = [
 },
 {
 	"name": "production-science-pack",
-	"seconds": 14,
+	"seconds": 21,
 	"produces": {
-		"production-science-pack": 2
+		"production-science-pack": 3
 	},
 	"ingredients": {
-		"electric-engine-unit": 1,
-		"electric-furnace": 1
+		"rail": 30,
+		"electric-furnace": 1,
+		"productivity-module": 1
 	}
 },
 {
@@ -1749,8 +1775,9 @@ recipes = [
 		"programmable-speaker": 1
 	},
 	"ingredients": {
-		"iron-plate": 5,
+		"iron-plate": 3,
 		"copper-cable": 5,
+		"iron-stick": 4,
 		"electronic-circuit": 4
 	}
 },
@@ -1895,17 +1922,6 @@ recipes = [
 	}
 },
 {
-	"name": "resource-monitor",
-	"seconds": 0.5,
-	"produces": {
-		"resource-monitor": 1
-	},
-	"ingredients": {
-		"copper-cable": 20,
-		"electronic-circuit": 10
-	}
-},
-{
 	"name": "roboport",
 	"seconds": 5,
 	"produces": {
@@ -1947,7 +1963,8 @@ recipes = [
 		"rocket-fuel": 1
 	},
 	"ingredients": {
-		"solid-fuel": 10
+		"solid-fuel": 10,
+		"light-oil": 10
 	}
 },
 {
@@ -2004,40 +2021,6 @@ recipes = [
 	}
 },
 {
-	"name": "science-pack-1",
-	"seconds": 5,
-	"produces": {
-		"science-pack-1": 1
-	},
-	"ingredients": {
-		"copper-plate": 1,
-		"iron-gear-wheel": 1
-	}
-},
-{
-	"name": "science-pack-2",
-	"seconds": 6,
-	"produces": {
-		"science-pack-2": 1
-	},
-	"ingredients": {
-		"transport-belt": 1,
-		"inserter": 1
-	}
-},
-{
-	"name": "science-pack-3",
-	"seconds": 12,
-	"produces": {
-		"science-pack-3": 1
-	},
-	"ingredients": {
-		"advanced-circuit": 1,
-		"engine-unit": 1,
-		"electric-mining-drill": 1
-	}
-},
-{
 	"name": "shotgun",
 	"seconds": 10,
 	"produces": {
@@ -2080,7 +2063,7 @@ recipes = [
 		"small-electric-pole": 2
 	},
 	"ingredients": {
-		"wood": 2,
+		"wood": 1,
 		"copper-cable": 2
 	}
 },
@@ -2092,7 +2075,7 @@ recipes = [
 	},
 	"ingredients": {
 		"iron-plate": 1,
-		"iron-stick": 3,
+		"copper-cable": 3,
 		"electronic-circuit": 1
 	}
 },
@@ -2129,13 +2112,13 @@ recipes = [
 	},
 	"ingredients": {
 		"steel-plate": 5,
-		"advanced-circuit": 1,
-		"solar-panel": 5
+		"advanced-circuit": 2,
+		"solar-panel": 1
 	}
 },
 {
 	"name": "solid-fuel-from-heavy-oil",
-	"seconds": 3,
+	"seconds": 2,
 	"produces": {
 		"solid-fuel": 1
 	},
@@ -2145,7 +2128,7 @@ recipes = [
 },
 {
 	"name": "solid-fuel-from-light-oil",
-	"seconds": 3,
+	"seconds": 2,
 	"produces": {
 		"solid-fuel": 1
 	},
@@ -2155,7 +2138,7 @@ recipes = [
 },
 {
 	"name": "solid-fuel-from-petroleum-gas",
-	"seconds": 3,
+	"seconds": 2,
 	"produces": {
 		"solid-fuel": 1
 	},
@@ -2196,6 +2179,34 @@ recipes = [
 		"advanced-circuit": 5,
 		"processing-unit": 5,
 		"speed-module-2": 5
+	}
+},
+{
+	"name": "spidertron",
+	"seconds": 10,
+	"produces": {
+		"spidertron": 1
+	},
+	"ingredients": {
+		"raw-fish": 1,
+		"rocket-control-unit": 16,
+		"low-density-structure": 150,
+		"effectivity-module-3": 2,
+		"rocket-launcher": 4,
+		"fusion-reactor-equipment": 2,
+		"exoskeleton-equipment": 4,
+		"radar": 2
+	}
+},
+{
+	"name": "spidertron-remote",
+	"seconds": 0.5,
+	"produces": {
+		"spidertron-remote": 1
+	},
+	"ingredients": {
+		"rocket-control-unit": 1,
+		"radar": 1
 	}
 },
 {
@@ -2259,17 +2270,6 @@ recipes = [
 	}
 },
 {
-	"name": "steel-axe",
-	"seconds": 0.5,
-	"produces": {
-		"steel-axe": 1
-	},
-	"ingredients": {
-		"steel-plate": 5,
-		"iron-stick": 2
-	}
-},
-{
 	"name": "steel-chest",
 	"seconds": 0.5,
 	"produces": {
@@ -2292,7 +2292,7 @@ recipes = [
 },
 {
 	"name": "steel-plate",
-	"seconds": 17.5,
+	"seconds": 16,
 	"produces": {
 		"steel-plate": 1
 	},
@@ -2302,7 +2302,7 @@ recipes = [
 },
 {
 	"name": "stone-brick",
-	"seconds": 3.5,
+	"seconds": 3.2,
 	"produces": {
 		"stone-brick": 1
 	},
@@ -2408,8 +2408,9 @@ recipes = [
 		"train-stop": 1
 	},
 	"ingredients": {
-		"iron-plate": 10,
+		"iron-plate": 6,
 		"steel-plate": 3,
+		"iron-stick": 6,
 		"electronic-circuit": 5
 	}
 },
@@ -2460,9 +2461,10 @@ recipes = [
 },
 {
 	"name": "uranium-processing",
-	"seconds": 10,
+	"seconds": 12,
 	"produces": {
-
+		"uranium-235": 1,
+		"uranium-238": 1
 	},
 	"ingredients": {
 		"uranium-ore": 10
@@ -2480,13 +2482,15 @@ recipes = [
 	}
 },
 {
-	"name": "wood",
-	"seconds": 0.5,
+	"name": "utility-science-pack",
+	"seconds": 21,
 	"produces": {
-		"wood": 2
+		"utility-science-pack": 3
 	},
 	"ingredients": {
-		"raw-wood": 1
+		"processing-unit": 2,
+		"flying-robot-frame": 1,
+		"low-density-structure": 3
 	}
 },
 {
@@ -2496,7 +2500,7 @@ recipes = [
 		"wooden-chest": 1
 	},
 	"ingredients": {
-		"wood": 4
+		"wood": 2
 	}
 }
 ]

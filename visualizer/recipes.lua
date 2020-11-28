@@ -21,4 +21,4 @@ for a, b in pairs(game.player.force.recipes) do
     table.insert(listresources,item)
 end
 table.sort(listresources)
-game.write_file("recipies.json", "[\r\n" .. table.concat(listresources, ",\r\n") .. "\r\n]")
+game.write_file("recipes.json", "[\r\n" .. table.concat(listresources, ",\r\n") .. "\r\n]")

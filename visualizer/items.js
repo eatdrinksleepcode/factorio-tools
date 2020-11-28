@@ -63,10 +63,10 @@ const groups = {
         'fast-splitter',
         'express-splitter',
 
-        'science-pack-2',
+        'logistic-science-pack',
     ],
     first: [
-        'science-pack-1',
+        'automation-science-pack',
     ],
     military: [
         'gun-turret',
@@ -90,10 +90,10 @@ const groups = {
         'iron-stick',
         'rail',
     ],
-    'high-tech': [
+    'utility': [
         'processing-unit',
         'speed-module',
-        'high-tech-science-pack',
+        'utility-science-pack',
         'assembling-machine-1',
         'assembling-machine-2',
         'assembling-machine-3',
@@ -134,12 +134,12 @@ const comboRecipes = [
             "research": 1
         },
         "ingredients": {
-            "science-pack-1": 1,
-            "science-pack-2": 1,
-            "science-pack-3": 1,
+            "automation-science-pack": 1,
+            "logistic-science-pack": 1,
+            "chemical-science-pack": 1,
             "military-science-pack": 1,
             "production-science-pack": 1,
-            "high-tech-science-pack": 1,
+            "utility-science-pack": 1
         },
         "images": [
             "lab"

@@ -9,6 +9,41 @@ const alternateImages = {
     // "battery-mk2-equipment": ["personal-battery-mk2"]
 };
 
+const syntheticRecipes = [
+    {
+        "name": "research",
+        "seconds": 0,
+        "produces": {
+            "research": 1
+        },
+        "ingredients": {
+            "automation-science-pack": 1,
+            "logistic-science-pack": 1,
+            "chemical-science-pack": 1,
+            "military-science-pack": 1,
+            "production-science-pack": 1,
+            "utility-science-pack": 1
+        },
+        "images": [
+            "lab"
+        ],
+    },
+    {
+        "name": "rocket-launch",
+        "seconds": 0,
+        "produces": {
+            "rocket-launch": 1,
+        },
+        "ingredients": {
+            "rocket-part": 100,
+            "satellite": 1,
+        },
+        "images": [
+            "rocket-silo",
+        ],
+    },
+];
+
 const excludedRecipesPatterns = [
     /empty-.+-barrel/,
     /fill-.+-barrel/
@@ -16,14 +51,12 @@ const excludedRecipesPatterns = [
 
 Array.prototype.groupBy = function(keySelector, valueSelector) {
     return this.reduce((acc, item) => {
-        // Group initialization
         const key = keySelector(item);
         if (!acc[key]) {
             acc[key] = [];
         }
     
         const value = valueSelector(item);
-        // Grouping
         acc[key].push(value);
     
         return acc;
@@ -40,25 +73,17 @@ function splitRecipesByProduct(recipes) {
 
 class ItemList {
     constructor(recipes) {
-        this.recipes = recipes;
-        this.recipesByProduct = splitRecipesByProduct(recipes);
+        this.recipes = recipes.concat(syntheticRecipes);
+        this.recipesByProduct = splitRecipesByProduct(this.recipes);
         this.items = {};
-        // this.reduceAllRecipes();
         this.reduceTargetRecipes();
     }
 
     reduceTargetRecipes() {
         [
-            "automation-science-pack",
-            "logistic-science-pack",
-            "chemical-science-pack"
+            "research",
+            "rocket-launch"
         ].forEach(productName => this.reduceRecipesForProduct(productName));
-    }
-
-    reduceAllRecipes() {
-        Object.keys(this.recipesByProduct).forEach(productName => {
-            this.reduceRecipesForProduct(productName);
-        });
     }
 
     reduceRecipesForProduct(productName) {
@@ -93,50 +118,6 @@ class ItemList {
             };
         }
         return this.items[name];
-    }
-
-    mapProductRecipe(recipe) {
-        console.log("mapProductRecipe", {recipeName: recipe.originalRecipe.name, productName: recipe.productName})
-        var item = this.items[recipe.productName];
-        if(item) {
-            return item;
-        }
-        item = {
-            originalRecipe: recipe.originalRecipe,
-            name: recipe.productName,
-            displayName: recipe.productName,
-            ingredients: this.mapIngredients(recipe),
-            isIncluded: true
-        };
-        return item;
-    }
-
-    mapProductRecipeName(productName) {
-        console.log("mapProductRecipeName", {productName})
-        var result = this.items[productName];
-        if(!result) {
-            const recipe = this.recipesByProduct[productName];
-            if(!recipe) {
-                result = {
-                    name: productName,
-                    displayName: productName,
-                    ingredients: {},
-                    originalRecipe: {},
-                };
-            } else {
-                result = this.mapProductRecipe(recipe);
-            }
-            this.items[productName] = result;
-        }
-        return result;
-    }
-
-    mapIngredients(recipe) {
-        return Object.entries(recipe.ingredients).filter(([ingredientName]) => ingredientName !== recipe.productName).reduce((ingredients, [ingredientName, ingredientQuantity]) => {
-            const ingredient = this.mapProductRecipeName(ingredientName);
-            ingredients[ingredient.displayName] = ingredientQuantity;
-            return ingredients;
-        }, {});
     }
 
 };

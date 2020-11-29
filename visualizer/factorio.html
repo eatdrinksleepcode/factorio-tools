@@ -3,12 +3,13 @@
 <script src="vivagraph.js"></script>
 <script src="utils.js"></script>
 <script src="recipes.json"></script>
+<script src="synthetic-recipes.json"></script>
 <script src="items-bus.js"></script>
 <script>
 
     var renderer = null;
 
-    const itemList = new ItemList(recipes)
+    const itemList = new ItemList(recipes.concat(syntheticRecipes));
     const products = itemList.items;
 
     const imageOverrides = {

@@ -9,41 +9,6 @@ const alternateImages = {
     // "battery-mk2-equipment": ["personal-battery-mk2"]
 };
 
-const syntheticRecipes = [
-    {
-        "name": "research",
-        "seconds": 0,
-        "produces": {
-            "research": 1
-        },
-        "ingredients": {
-            "automation-science-pack": 1,
-            "logistic-science-pack": 1,
-            "chemical-science-pack": 1,
-            "military-science-pack": 1,
-            "production-science-pack": 1,
-            "utility-science-pack": 1
-        },
-        "images": [
-            "lab"
-        ],
-    },
-    {
-        "name": "rocket-launch",
-        "seconds": 0,
-        "produces": {
-            "rocket-launch": 1,
-        },
-        "ingredients": {
-            "rocket-part": 100,
-            "satellite": 1,
-        },
-        "images": [
-            "rocket-silo",
-        ],
-    },
-];
-
 const excludedRecipesPatterns = [
     /empty-.+-barrel/,
     /fill-.+-barrel/
@@ -73,7 +38,7 @@ function splitRecipesByProduct(recipes) {
 
 class ItemList {
     constructor(recipes) {
-        this.recipes = recipes.concat(syntheticRecipes);
+        this.recipes = recipes;
         this.recipesByProduct = splitRecipesByProduct(this.recipes);
         this.items = {};
         this.reduceTargetRecipes();

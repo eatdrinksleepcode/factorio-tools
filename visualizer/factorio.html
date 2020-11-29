@@ -8,7 +8,8 @@
 
     var renderer = null;
 
-    const products = new ItemList(recipes).items;
+    const itemList = new ItemList(recipes)
+    const products = itemList.items;
 
     const imageOverrides = {
         rail: 'straight-rail',
@@ -45,7 +46,7 @@
             graph.addNode(productName, product);
             for(ingredientName in product.ingredients) {
                 // ingredientName = makeExpansiveProductsTransparent(ingredientName);
-                if(!products[ingredientName].isIncluded) {
+                if(!products[ingredientName]?.isIncluded) {
                     continue;
                 }
                 graph.addNode(ingredientName, products[ingredientName]);
@@ -59,7 +60,7 @@
         graphics
             .node(function(node) {
                 const nodeGroup = Viva.Graph.svg('g');
-                const images = node.data.originalRecipe.images || [node.data.name];
+                const images = node.data.originalRecipe.images || node.data.images || [node.data.name];
                 const nodeImg = Viva.Graph.svg('g');
                 const totalNodeSize = nodeSize * images.length;
                 images.forEach((imgName, index) => {

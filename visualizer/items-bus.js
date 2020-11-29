@@ -4,39 +4,38 @@ const busItems = [
     'steel-plate'
 ];
 
+const alternateImages = {
+    "battery-equipment": ["personal-battery"]
+    // "battery-mk2-equipment": ["personal-battery-mk2"]
+};
+
 const excludedRecipesPatterns = [
-    'empty-crude-oil-barrel',
-    'fill-crude-oil-barrel',
-    'empty-heavy-oil-barrel',
-    'fill-heavy-oil-barrel',
-    'empty-light-oil-barrel',
-    'fill-light-oil-barrel',
-    'empty-lubricant-barrel',
-    'fill-lubricant-barrel',
-    'empty-petroleum-gas-barrel',
-    'fill-petroleum-gas-barrel',
-    'empty-sulfuric-acid-barrel',
-    'fill-sulfuric-acid-barrel',
-    'empty-water-barrel',
-    'fill-water-barrel'
+    /empty-.+-barrel/,
+    /fill-.+-barrel/
 ];
 
-function splitRecipesByProduct(recipes) {
-    return recipes.filter(recipe => !excludedRecipesList.includes(recipe.name)).map(recipe => {
-        return Object.keys(recipe.produces).map(productName => {
-            return {
-                originalRecipe: recipe,
-                productName,
-                quantity: recipe.produces[productName],
-                ingredients: { ...recipe.ingredients },
-            };
-        });
-    })
-    .reduce((x, y) => x.concat(y))
-    .reduce((list, recipe) => { 
-        list[recipe.productName] = recipe;
-        return list;
+Array.prototype.groupBy = function(keySelector, valueSelector) {
+    return this.reduce((acc, item) => {
+        // Group initialization
+        const key = keySelector(item);
+        if (!acc[key]) {
+            acc[key] = [];
+        }
+    
+        const value = valueSelector(item);
+        // Grouping
+        acc[key].push(value);
+    
+        return acc;
     }, {});
+}
+
+function splitRecipesByProduct(recipes) {
+    console.log("recipes: ", recipes.length)
+    const includedRecipes = recipes.filter(recipe => !excludedRecipesPatterns.some(pattern => pattern.test(recipe.name)))
+    console.log("includedRecipes: ", includedRecipes.length)
+    return includedRecipes.flatMap(recipe => Object.keys(recipe.produces).map(productName => ({ productName, recipe })))
+        .groupBy(x => x.productName, x => x.recipe);
 }
 
 class ItemList {
@@ -44,17 +43,60 @@ class ItemList {
         this.recipes = recipes;
         this.recipesByProduct = splitRecipesByProduct(recipes);
         this.items = {};
-        this.reduceRecipes();
+        // this.reduceAllRecipes();
+        this.reduceTargetRecipes();
     }
 
-    reduceRecipes() {
-        Object.values(this.recipesByProduct).forEach(recipe => {
-            const item = this.mapProductRecipe(recipe);
-            this.items[item.displayName] = item;
+    reduceTargetRecipes() {
+        [
+            "automation-science-pack",
+            "logistic-science-pack",
+            "chemical-science-pack"
+        ].forEach(productName => this.reduceRecipesForProduct(productName));
+    }
+
+    reduceAllRecipes() {
+        Object.keys(this.recipesByProduct).forEach(productName => {
+            this.reduceRecipesForProduct(productName);
         });
     }
 
+    reduceRecipesForProduct(productName) {
+        this.initItem(productName);
+        const recipesForProduct = this.recipesByProduct[productName];
+        console.log({recipesForProduct});
+        if(!recipesForProduct) return;
+        console.assert(recipesForProduct.length == 1, {productName, recipesForProduct});
+        this.reduceRecipe(recipesForProduct[0]);
+    }
+
+    reduceRecipe(recipe) {
+        Object.keys(recipe.produces).forEach(productName => {
+            const product = this.initItem(productName);
+            product.recipe = recipe;
+            product.originalRecipe = recipe; // for compatibility
+            product.ingredients = recipe.ingredients;
+            product.isIncluded = true;
+            Object.keys(product.ingredients).forEach(ingredientName => {
+                this.reduceRecipesForProduct(ingredientName);
+            });
+        });
+    }
+
+    initItem(name) {
+        if(!this.items[name]) {
+            this.items[name] = {
+                name,
+                displayName: name,
+                images: alternateImages[name],
+                ingredients: {}
+            };
+        }
+        return this.items[name];
+    }
+
     mapProductRecipe(recipe) {
+        console.log("mapProductRecipe", {recipeName: recipe.originalRecipe.name, productName: recipe.productName})
         var item = this.items[recipe.productName];
         if(item) {
             return item;
@@ -64,11 +106,13 @@ class ItemList {
             name: recipe.productName,
             displayName: recipe.productName,
             ingredients: this.mapIngredients(recipe),
+            isIncluded: true
         };
         return item;
     }
 
     mapProductRecipeName(productName) {
+        console.log("mapProductRecipeName", {productName})
         var result = this.items[productName];
         if(!result) {
             const recipe = this.recipesByProduct[productName];

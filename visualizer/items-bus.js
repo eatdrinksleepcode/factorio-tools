@@ -1,7 +1,14 @@
+const allRecipes = recipes.concat(syntheticRecipes);
+
 const excludedRecipesPatterns = [
     /empty-.+-barrel/,
     /fill-.+-barrel/
 ];
+
+const recipeOverride = {
+    "petroleum-gas": "advanced-oil-processing",
+    "heavy-oil": "advanced-oil-processing"
+};
 
 Array.prototype.groupBy = function(keySelector, valueSelector) {
     return this.reduce((acc, item) => {
@@ -17,6 +24,10 @@ Array.prototype.groupBy = function(keySelector, valueSelector) {
     }, {});
 }
 
+Object.prototype.let = function(func) {
+    return func(this);
+}
+
 function splitRecipesByProduct(recipes) {
     console.log("recipes: ", recipes.length)
     const includedRecipes = recipes.filter(recipe => !excludedRecipesPatterns.some(pattern => pattern.test(recipe.name)))
@@ -25,7 +36,11 @@ function splitRecipesByProduct(recipes) {
         .groupBy(x => x.productName, x => x.recipe);
 }
 
-recipesByProduct = splitRecipesByProduct(recipes);
+recipesByProduct = splitRecipesByProduct(allRecipes);
+recipesByName = allRecipes.reduce((list, recipe) => {
+    list[recipe.name] = recipe;
+    return list;
+}, {});
 
 const peripherals = {
     "automation-science": {
@@ -59,7 +74,7 @@ class Peripheral {
 
     reduceRecipesForProduct(productName) {
         const product = this.initItem(productName);
-        const recipesForProduct = recipesByProduct[productName];
+        const recipesForProduct = recipeOverride[productName]?.let(overrideName => [recipesByName[overrideName]]) || recipesByProduct[productName];
         console.log({recipesForProduct});
         console.assert(recipesForProduct?.length > 0, "No recipe found", {productName});
         console.assert(recipesForProduct.length == 1, "More than 1 recipe found", {productName, recipesForProduct});
@@ -149,10 +164,14 @@ class Bus {
 }
 
 const oreBus = new Bus("ore", [naturalItem("iron-ore"), naturalItem("copper-ore")]);
-const mainBus = new Bus("main");
+const mainBus = new Bus("main", [/*HACK*/ naturalItem("water"), naturalItem("coal"), naturalItem("crude-oil"), naturalItem("stone")]);
+const researchBus = new Bus("research");
 forge = new Peripheral("forge", ["iron-plate", "copper-plate"], oreBus, mainBus);
+research = new Peripheral("research", ["research"], mainBus, researchBus);
 allItems = [
     oreBus,
     forge,
-    mainBus
+    mainBus,
+    researchBus,
+    research
 ].reduce((x, y) => Object.assign(x, y.outputs), {});

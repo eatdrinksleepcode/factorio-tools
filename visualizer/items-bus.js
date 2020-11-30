@@ -170,5 +170,7 @@ base["mainBus"] = new Bus("main", [/*HACK*/ naturalItem("water"), naturalItem("c
 base["oil"] = new Peripheral("oil", ["petroleum-gas", "heavy-oil", "sulfur", "plastic-bar"], [base["oilBus"], base["mainBus"]], base["mainBus"]);
 base["researchBus"] = new Bus("research");
 base["forge"] = new Peripheral("forge", ["iron-plate", "copper-plate", "stone-brick", "stone"], base["oreBus"], base["mainBus"]);
+base["electronic-circuits"] = new Peripheral("electronic-circuits", ["electronic-circuit"], base["mainBus"], base["mainBus"]);
+base["advanced-circuits"] = new Peripheral("advanced-circuits", ["advanced-circuit"], base["mainBus"], base["mainBus"]);
 base["research"] = new Peripheral("research", ["research"], base["mainBus"], base["researchBus"]);
 allItems = Object.values(base).reduce((x, y) => Object.assign(x, y.outputs), {});

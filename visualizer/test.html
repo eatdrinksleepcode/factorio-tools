@@ -6,6 +6,7 @@
 <script src="items-bus.js"></script>
 <script>
     function runTests() {
+        testBusAndPeripherals();
         testReduceRecipes();
     }
 
@@ -45,6 +46,15 @@
         }
     }
 
+    function assertIncludes(actual, expected) {
+        console.assert(actual.includes(expected), "Actual collection " + print(actual) + " does not contain expected " + expected);
+    }
+
+    function testBusAndPeripherals() {
+        assertIncludes(mainBus.outputs, 'iron-plate');
+        assertIncludes(mainBus.outputs, 'copper-plate');
+    }
+
     function testReduceRecipes() {
         const products = new ItemList(recipes).items;
 
@@ -55,6 +65,7 @@
         // assertEqual(products['iron-plate-transport'], { name: 'iron-plate', displayName: 'iron-plate-transport'/*, ingredients: { 'iron-ore': 1 } */});
         assertEqual(products['electric-mining-drill'], { name: 'electric-mining-drill', displayName: 'electric-mining-drill', ingredients: { 'electronic-circuit': 3, 'iron-plate': 10, 'iron-gear-wheel': 5 } });
         assertEqual(products['piercing-rounds-magazine'], { name: 'piercing-rounds-magazine', displayName: 'piercing-rounds-magazine', isIncluded: true });
+        assertEqual(products['research'], { name: 'research', displayName: 'research', ingredients: { 'automation-science-pack': 1 }});
         // assertEqual(products['research'], { name: 'research', displayName: 'research', isIncluded: true, ingredients: { 'automation-science-pack': 1, 'logistic-science-pack': 1, 'chemical-science-pack': 1 } });
         // assertEqual(products['steel-plate-military'], { name: 'steel-plate', displayName: 'steel-plate-military' });
         // assertEmpty(products['steel-plate-military'].ingredients, "steel-plate-military.ingredients");

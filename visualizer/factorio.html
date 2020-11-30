@@ -9,8 +9,7 @@
 
     var renderer = null;
 
-    const itemList = new ItemList(recipes.concat(syntheticRecipes));
-    const products = itemList.items;
+    const products = allItems;
 
     const imageOverrides = {
         rail: 'straight-rail',
@@ -75,7 +74,7 @@
                         .link('https://wiki.factorio.com/images/' + imgFileName + '.png');
                     nodeImg.append(subImg);
                 });
-                var title = node.data.name;
+                var title = node.data.displayName;
                 if(node.data.groupName) {
                     title = title + ' (' + node.data.groupName + ')';
                 }

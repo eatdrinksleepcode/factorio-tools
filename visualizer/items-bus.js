@@ -76,7 +76,6 @@ class Peripheral {
         this.inputBuses = Array.isArray(inputBuses) ? inputBuses : [inputBuses];
         this.outputBus = outputBus;
         this.reduceOutputs();
-        this.outputs = this.items; // HACK
     }
 
     reduceOutputs() {
@@ -85,8 +84,6 @@ class Peripheral {
         this.produces.forEach(productName => {
             this.outputBus.put(this.reduceRecipesForProduct(productName));
         });
-        this.inputBuses.forEach(bus => bus.disconnect());
-        this.outputBus.disconnect();
     }
 
     reduceRecipesForProduct(productName) {
@@ -146,66 +143,57 @@ function naturalItem(name) {
 class Bus {
     constructor(name, outputs) {
         this.name = name + "-bus";
-        this.outputs = {};
-        this.connection = null;
-        this.connectionIndex = -1;
+        this.connectionIndex = 0;
         this.lastConnectionItem = null;
+        this.items = {};
+        this.outputs = {};
         this.connect();
         (outputs || []).forEach(output => {
+            output.displayName += "-" + this.name;
             this.put(output, false);
+            this.items[output.displayName] = output;
         });
-        this.disconnect();
     }
 
     makeLocalName(itemName) {
         return itemName + "-" + this.name;
     }
 
-    put(output, includeIngredients = true) {
-        const name = output.name;
-        const localName = this.makeLocalName(name);
-        const item = {
-            name,
-            displayName: localName,
-            ingredients: {},
-            isIncluded: true,
-            recipe: {},
-            originalRecipe: {} // for compatibility
-        };
+    put(item, includeIngredients = true) {
         this.findInputConnectionItem().ingredients[item.displayName] = 1;
         if(includeIngredients) {
-            item.ingredients[output.displayName] = 1;
+            item.ingredients[item.displayName] = 1;
         }
-        this.connection[localName] = item;
+        this.outputs[item.name] = item;
         return item;
     }
 
     take(itemName) {
-        return this.outputs[this.makeLocalName(itemName)]?.let(x =>
+        return this.outputs[itemName]?.let(x =>
             { return { ...x, connection: this.findOutputConnectionItem() }; }
         );
     }
 
-    findOutputConnectionItem() {
+    findOutputConnectionItem(create = true) {
         const outputConnectionName = this.currentConnectionName() + "-out";
-        if(!this.connection[outputConnectionName]) {
+        if(create && !this.items[outputConnectionName]) {
             const outputConnectionItem = naturalItem(outputConnectionName);
             this.lastConnectionItem?.let(item => {outputConnectionItem.ingredients[item.name] = 1} );
-            this.connection[outputConnectionName] = outputConnectionItem;
+            this.items[outputConnectionName] = outputConnectionItem;
             this.lastConnectionItem = outputConnectionItem;
         }
-        return this.connection[outputConnectionName];
+        return this.items[outputConnectionName];
     }
 
-    findInputConnectionItem() {
+    findInputConnectionItem(create = true) {
         const inputConnectionName = this.currentConnectionName() + "-in";
-        if(!this.connection[inputConnectionName]) {
+        if(create && !this.items[inputConnectionName]) {
             const inputConnectionItem = naturalItem(inputConnectionName);
             this.lastConnectionItem?.let(item => {inputConnectionItem.ingredients[item.name] = 1} );
-            this.connection[inputConnectionName] = inputConnectionItem;
+            this.items[inputConnectionName] = inputConnectionItem;
             this.lastConnectionItem = inputConnectionItem;
         }
-        return this.connection[inputConnectionName];
+        return this.items[inputConnectionName];
     }
 
     currentConnectionName() {
@@ -213,16 +201,8 @@ class Bus {
     }
 
     connect() {
-        if(null === this.connection) {
+        if(this.findOutputConnectionItem(false) || this.findInputConnectionItem(false)) {
             this.connectionIndex++;
-            this.connection = {};
-        }
-    }
-
-    disconnect() {
-        if(null != this.connection) {
-            Object.assign(this.outputs, this.connection);
-            this.connection = null;
         }
     }
 }
@@ -248,4 +228,4 @@ base["utility-science"] = new Peripheral("utility-science", ["utility-science-pa
 base["research"] = new Peripheral("research", ["research"], base["researchBus"], base["researchBus"]);
 base["rocket-launch"] = new Peripheral("rocket-launch", ["rocket-launch"], base["mainBus"], base["rocketBus"]);
 base["robots"] = new Peripheral("robots", ["construction-robot", "logistic-robot"], base["mainBus"], base["robotBus"])
-allItems = Object.values(base).reduce((x, y) => Object.assign(x, y.outputs), {});
+allItems = Object.values(base).reduce((x, y) => Object.assign(x, y.items), {});

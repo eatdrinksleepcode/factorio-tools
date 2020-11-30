@@ -73,6 +73,9 @@ class Peripheral {
     }
 
     reduceRecipesForProduct(productName) {
+        if(this.inputBus.includes(productName)) {
+            return this.inputBus.find(productName);
+        }
         const product = this.initItem(productName);
         const recipesForProduct = recipeOverride[productName]?.let(overrideName => [recipesByName[overrideName]]) || recipesByProduct[productName];
         console.log({recipesForProduct});
@@ -89,11 +92,7 @@ class Peripheral {
             product.originalRecipe = recipe; // for compatibility
             product.isIncluded = true;
             Object.keys(recipe.ingredients).forEach(ingredientName => {
-                if(this.inputBus.includes(ingredientName)) { 
-                    product.ingredients[this.inputBus.find(ingredientName).displayName] = recipe.ingredients[ingredientName]
-                } else {
-                    product.ingredients[this.reduceRecipesForProduct(ingredientName).displayName] = recipe.ingredients[ingredientName];
-                }
+                product.ingredients[this.reduceRecipesForProduct(ingredientName).displayName] = recipe.ingredients[ingredientName];
             });
         });
     }
@@ -133,7 +132,7 @@ class Bus {
     }
 
     makeLocalName(itemName) {
-        return itemName + "-bus";
+        return itemName + "-" + this.name;
     }
 
     accept(output, includeIngredients = true) {
@@ -164,9 +163,11 @@ class Bus {
 }
 
 const base = {};
-base["oreBus"] = new Bus("ore", [naturalItem("iron-ore"), naturalItem("copper-ore")]);
-base["mainBus"] = new Bus("main", [/*HACK*/ naturalItem("water"), naturalItem("coal"), naturalItem("crude-oil"), naturalItem("stone")]);
+base["oreBus"] = new Bus("ore", [naturalItem("iron-ore"), naturalItem("copper-ore"), naturalItem("stone")]);
+base["oilBus"] = new Bus("oil", [naturalItem("water"), naturalItem("crude-oil")]);
+base["mainBus"] = new Bus("main", [/*HACK*/ naturalItem("water"), naturalItem("coal")]);
+base["oil"] = new Peripheral("oil", ["petroleum-gas", "heavy-oil"], base["oilBus"], base["mainBus"]);
 base["researchBus"] = new Bus("research");
-base["forge"] = new Peripheral("forge", ["iron-plate", "copper-plate"], base["oreBus"], base["mainBus"]);
+base["forge"] = new Peripheral("forge", ["iron-plate", "copper-plate", "stone-brick", "stone"], base["oreBus"], base["mainBus"]);
 base["research"] = new Peripheral("research", ["research"], base["mainBus"], base["researchBus"]);
 allItems = Object.values(base).reduce((x, y) => Object.assign(x, y.outputs), {});

@@ -56,11 +56,11 @@ const peripherals = {
 };
 
 class Peripheral {
-    constructor(name, produces, inputBus, outputBus) {
+    constructor(name, produces, inputBuses, outputBus) {
         this.name = name;
         this.produces = [].concat(produces);
         this.items = {};
-        this.inputBus = inputBus;
+        this.inputBuses = Array.isArray(inputBuses) ? inputBuses : [inputBuses];
         this.outputBus = outputBus;
         this.reduceOutputs();
         this.outputs = this.items; // HACK
@@ -73,8 +73,9 @@ class Peripheral {
     }
 
     reduceRecipesForProduct(productName) {
-        if(this.inputBus.includes(productName)) {
-            return this.inputBus.find(productName);
+        const input = this.inputBuses.map(bus => bus.find(productName)).find(x => x);
+        if(input) {
+            return input;
         }
         const product = this.initItem(productName);
         const recipesForProduct = recipeOverride[productName]?.let(overrideName => [recipesByName[overrideName]]) || recipesByProduct[productName];
@@ -166,7 +167,7 @@ const base = {};
 base["oreBus"] = new Bus("ore", [naturalItem("iron-ore"), naturalItem("copper-ore"), naturalItem("stone")]);
 base["oilBus"] = new Bus("oil", [naturalItem("water"), naturalItem("crude-oil")]);
 base["mainBus"] = new Bus("main", [/*HACK*/ naturalItem("water"), naturalItem("coal")]);
-base["oil"] = new Peripheral("oil", ["petroleum-gas", "heavy-oil"], base["oilBus"], base["mainBus"]);
+base["oil"] = new Peripheral("oil", ["petroleum-gas", "heavy-oil", "sulfur", "plastic-bar"], [base["oilBus"], base["mainBus"]], base["mainBus"]);
 base["researchBus"] = new Bus("research");
 base["forge"] = new Peripheral("forge", ["iron-plate", "copper-plate", "stone-brick", "stone"], base["oreBus"], base["mainBus"]);
 base["research"] = new Peripheral("research", ["research"], base["mainBus"], base["researchBus"]);

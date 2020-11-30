@@ -97,41 +97,6 @@ class Peripheral {
     }
 }
 
-class Bus {
-    constructor(outputs) {
-        this.outputs = {};
-        (outputs || []).forEach(output => {
-            this.accept(output).ingredients = {};
-        });
-    }
-
-    makeLocalName(itemName) {
-        return itemName + "-bus";
-    }
-
-    accept(output) {
-        const name = output.name;
-        const localName = this.makeLocalName(name);
-        this.outputs[localName] = {
-            name,
-            displayName: localName,
-            ingredients: { [output.displayName]: 1 },
-            isIncluded: true,
-            recipe: {},
-            originalRecipe: {} // for compatibility
-        };
-        return this.outputs[localName];
-    }
-
-    includes(itemName) {
-        return this.outputs[this.makeLocalName(itemName)];
-    }
-
-    find(itemName) {
-        return this.outputs[this.makeLocalName(itemName)];
-    }
-}
-
 function naturalItem(name) {
     return {
         name,
@@ -143,9 +108,49 @@ function naturalItem(name) {
     };
 }
 
-const oreBus = new Bus([naturalItem("iron-ore"), naturalItem("copper-ore")]);
-const mainBus = new Bus()
-forge = new Peripheral("forge", ["iron-plate", "copper-plate"], oreBus, mainBus)
+class Bus {
+    constructor(name, outputs) {
+        this.name = name + "-bus";
+        this.outputs = { [this.name]: naturalItem(this.name) };
+        (outputs || []).forEach(output => {
+            this.accept(output, false);
+        });
+    }
+
+    makeLocalName(itemName) {
+        return itemName + "-bus";
+    }
+
+    accept(output, includeIngredients = true) {
+        const name = output.name;
+        const localName = this.makeLocalName(name);
+        const item = {
+            name,
+            displayName: localName,
+            ingredients: { [this.name]: 1 },
+            isIncluded: true,
+            recipe: {},
+            originalRecipe: {} // for compatibility
+        };
+        if(includeIngredients) {
+            item.ingredients[output.displayName] = 1;
+        }
+        this.outputs[localName] = item;
+        return item;
+    }
+
+    includes(itemName) {
+        return this.outputs[this.makeLocalName(itemName)];
+    }
+
+    find(itemName) {
+        return this.outputs[this.makeLocalName(itemName)];
+    }
+}
+
+const oreBus = new Bus("ore", [naturalItem("iron-ore"), naturalItem("copper-ore")]);
+const mainBus = new Bus("main");
+forge = new Peripheral("forge", ["iron-plate", "copper-plate"], oreBus, mainBus);
 allItems = [
     oreBus,
     forge,

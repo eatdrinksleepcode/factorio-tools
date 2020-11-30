@@ -163,15 +163,10 @@ class Bus {
     }
 }
 
-const oreBus = new Bus("ore", [naturalItem("iron-ore"), naturalItem("copper-ore")]);
-const mainBus = new Bus("main", [/*HACK*/ naturalItem("water"), naturalItem("coal"), naturalItem("crude-oil"), naturalItem("stone")]);
-const researchBus = new Bus("research");
-forge = new Peripheral("forge", ["iron-plate", "copper-plate"], oreBus, mainBus);
-research = new Peripheral("research", ["research"], mainBus, researchBus);
-allItems = [
-    oreBus,
-    forge,
-    mainBus,
-    researchBus,
-    research
-].reduce((x, y) => Object.assign(x, y.outputs), {});
+const base = {};
+base["oreBus"] = new Bus("ore", [naturalItem("iron-ore"), naturalItem("copper-ore")]);
+base["mainBus"] = new Bus("main", [/*HACK*/ naturalItem("water"), naturalItem("coal"), naturalItem("crude-oil"), naturalItem("stone")]);
+base["researchBus"] = new Bus("research");
+base["forge"] = new Peripheral("forge", ["iron-plate", "copper-plate"], base["oreBus"], base["mainBus"]);
+base["research"] = new Peripheral("research", ["research"], base["mainBus"], base["researchBus"]);
+allItems = Object.values(base).reduce((x, y) => Object.assign(x, y.outputs), {});

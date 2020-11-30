@@ -7,7 +7,9 @@ const excludedRecipesPatterns = [
 
 const recipeOverride = {
     "petroleum-gas": "advanced-oil-processing",
-    "heavy-oil": "advanced-oil-processing"
+    "heavy-oil": "advanced-oil-processing",
+    "light-oil": "advanced-oil-processing",
+    "solid-fuel": "solid-fuel-from-light-oil"
 };
 
 Array.prototype.groupBy = function(keySelector, valueSelector) {
@@ -211,11 +213,13 @@ const base = {};
 base["oreBus"] = new Bus("ore", [naturalItem("iron-ore"), naturalItem("copper-ore"), naturalItem("stone")]);
 base["oilBus"] = new Bus("oil", [naturalItem("water"), naturalItem("crude-oil")]);
 base["mainBus"] = new Bus("main", [/*HACK*/ naturalItem("water"), naturalItem("coal")]);
-base["oil"] = new Peripheral("oil", ["petroleum-gas", "heavy-oil", "sulfur", "plastic-bar"], [base["oilBus"], base["mainBus"]], base["mainBus"]);
-base["researchBus"] = new Bus("research");
 base["forge"] = new Peripheral("forge", ["iron-plate", "steel-plate", "copper-plate", "stone-brick", "stone"], base["oreBus"], base["mainBus"]);
+base["oil"] = new Peripheral("oil", ["petroleum-gas", "lubricant", "light-oil", "sulfur", "sulfuric-acid", "battery", "plastic-bar"], [base["oilBus"], base["mainBus"]], base["mainBus"]);
+base["researchBus"] = new Bus("research");
+base["rocketBus"] = new Bus("rocket");
 base["electronic-circuits"] = new Peripheral("electronic-circuits", ["electronic-circuit"], base["mainBus"], base["mainBus"]);
 base["advanced-circuits"] = new Peripheral("advanced-circuits", ["advanced-circuit"], base["mainBus"], base["mainBus"]);
+base["processing-units"] = new Peripheral("processing-units", ["processing-unit"], base["mainBus"], base["mainBus"]);
 base["automation-science"] = new Peripheral("automation-science", ["automation-science-pack"], base["mainBus"], base["researchBus"]);
 base["logistic-science"] = new Peripheral("logistic-science", ["logistic-science-pack"], base["mainBus"], base["researchBus"]);
 base["chemical-science"] = new Peripheral("chemical-science", ["chemical-science-pack"], base["mainBus"], base["researchBus"]);
@@ -223,4 +227,5 @@ base["military-science"] = new Peripheral("military-science", ["military-science
 base["production-science"] = new Peripheral("production-science", ["production-science-pack"], base["mainBus"], base["researchBus"]);
 base["utility-science"] = new Peripheral("utility-science", ["utility-science-pack"], base["mainBus"], base["researchBus"]);
 base["research"] = new Peripheral("research", ["research"], base["researchBus"], base["researchBus"]);
+base["rocket-launch"] = new Peripheral("rocket-launch", ["rocket-launch"], base["mainBus"], base["rocketBus"]);
 allItems = Object.values(base).reduce((x, y) => Object.assign(x, y.outputs), {});

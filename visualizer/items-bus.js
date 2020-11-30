@@ -167,11 +167,12 @@ class Bus {
         const item = {
             name,
             displayName: localName,
-            ingredients: { [this.findInputConnectionItem().name]: 1 },
+            ingredients: {},
             isIncluded: true,
             recipe: {},
             originalRecipe: {} // for compatibility
         };
+        this.findInputConnectionItem().ingredients[item.displayName] = 1;
         if(includeIngredients) {
             item.ingredients[output.displayName] = 1;
         }

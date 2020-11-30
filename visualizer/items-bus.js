@@ -24,6 +24,17 @@ Array.prototype.groupBy = function(keySelector, valueSelector) {
     }, {});
 }
 
+Array.prototype.lazyMap = function*(fn) {
+    for(let x of this)
+        yield fn(x);
+}
+
+function find(a, fn = (x => x)) {
+    for(let x of a)
+        if (fn(x))
+            return x;
+}
+
 Object.prototype.let = function(func) {
     return func(this);
 }
@@ -67,22 +78,27 @@ class Peripheral {
     }
 
     reduceOutputs() {
+        this.inputBuses.forEach(bus => bus.connect());
+        this.outputBus.connect();
         this.produces.forEach(productName => {
-            this.outputBus.accept(this.reduceRecipesForProduct(productName));
+            this.outputBus.put(this.reduceRecipesForProduct(productName));
         });
+        this.inputBuses.forEach(bus => bus.disconnect());
+        this.outputBus.disconnect();
     }
 
     reduceRecipesForProduct(productName) {
-        const input = this.inputBuses.map(bus => bus.find(productName)).find(x => x);
-        if(input) {
-            return input;
-        }
         const product = this.initItem(productName);
-        const recipesForProduct = recipeOverride[productName]?.let(overrideName => [recipesByName[overrideName]]) || recipesByProduct[productName];
-        console.log({recipesForProduct});
-        console.assert(recipesForProduct?.length > 0, "No recipe found", {productName});
-        console.assert(recipesForProduct.length == 1, "More than 1 recipe found", {productName, recipesForProduct});
-        this.reduceRecipe(recipesForProduct[0]);
+        const input = find(this.inputBuses.lazyMap(bus => bus.take(productName)));
+        if(input) {
+            product.ingredients[input.connection.name] = 1;
+        } else {
+            const recipesForProduct = recipeOverride[productName]?.let(overrideName => [recipesByName[overrideName]]) || recipesByProduct[productName];
+            console.log({recipesForProduct});
+            console.assert(recipesForProduct?.length > 0, "No recipe found", {productName});
+            console.assert(recipesForProduct.length == 1, "More than 1 recipe found", {productName, recipesForProduct});
+            this.reduceRecipe(recipesForProduct[0]);
+        }
         return product;
     }
 
@@ -105,7 +121,9 @@ class Peripheral {
                 name,
                 displayName: localName,
                 ingredients: {},
-                isIncluded: true
+                isIncluded: true,
+                recipe: {},
+                originalRecipe: {}
             };
         }
         return this.items[localName];
@@ -126,23 +144,27 @@ function naturalItem(name) {
 class Bus {
     constructor(name, outputs) {
         this.name = name + "-bus";
-        this.outputs = { [this.name]: naturalItem(this.name) };
+        this.outputs = {};
+        this.connection = null;
+        this.connectionIndex = -1;
+        this.connect();
         (outputs || []).forEach(output => {
-            this.accept(output, false);
+            this.put(output, false);
         });
+        this.disconnect();
     }
 
     makeLocalName(itemName) {
         return itemName + "-" + this.name;
     }
 
-    accept(output, includeIngredients = true) {
+    put(output, includeIngredients = true) {
         const name = output.name;
         const localName = this.makeLocalName(name);
         const item = {
             name,
             displayName: localName,
-            ingredients: { [this.name]: 1 },
+            ingredients: { [this.currentConnectionName()]: 1 },
             isIncluded: true,
             recipe: {},
             originalRecipe: {} // for compatibility
@@ -150,16 +172,38 @@ class Bus {
         if(includeIngredients) {
             item.ingredients[output.displayName] = 1;
         }
-        this.outputs[localName] = item;
+        this.connection[localName] = item;
         return item;
     }
 
-    includes(itemName) {
-        return this.outputs[this.makeLocalName(itemName)];
+    take(itemName) {
+        return this.outputs[this.makeLocalName(itemName)]?.let(x =>
+            { return { ...x, connection: this.connection[this.currentConnectionName()] }; }
+        );
     }
 
-    find(itemName) {
-        return this.outputs[this.makeLocalName(itemName)];
+    currentConnectionName() {
+        return this.name + "-" + this.connectionIndex
+    }
+
+    connect() {
+        if(null === this.connection) {
+            this.connectionIndex++;
+            this.connection = {};
+            const connectionName = this.currentConnectionName();
+            const connectionItem = naturalItem(connectionName);
+            if(this.connectionIndex > 0) {
+                connectionItem.ingredients[this.name + "-" + (this.connectionIndex - 1)] = 1;
+            }
+            this.connection[connectionName] = connectionItem;
+        }
+    }
+
+    disconnect() {
+        if(null != this.connection) {
+            Object.assign(this.outputs, this.connection);
+            this.connection = null;
+        }
     }
 }
 

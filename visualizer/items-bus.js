@@ -149,6 +149,7 @@ class Bus {
         this.outputs = {};
         this.connection = null;
         this.connectionIndex = -1;
+        this.lastConnectionItem = null;
         this.connect();
         (outputs || []).forEach(output => {
             this.put(output, false);
@@ -166,7 +167,7 @@ class Bus {
         const item = {
             name,
             displayName: localName,
-            ingredients: { [this.currentConnectionName()]: 1 },
+            ingredients: { [this.findInputConnectionItem().name]: 1 },
             isIncluded: true,
             recipe: {},
             originalRecipe: {} // for compatibility
@@ -180,8 +181,30 @@ class Bus {
 
     take(itemName) {
         return this.outputs[this.makeLocalName(itemName)]?.let(x =>
-            { return { ...x, connection: this.connection[this.currentConnectionName()] }; }
+            { return { ...x, connection: this.findOutputConnectionItem() }; }
         );
+    }
+
+    findOutputConnectionItem() {
+        const outputConnectionName = this.currentConnectionName() + "-out";
+        if(!this.connection[outputConnectionName]) {
+            const outputConnectionItem = naturalItem(outputConnectionName);
+            this.lastConnectionItem?.let(item => {outputConnectionItem.ingredients[item.name] = 1} );
+            this.connection[outputConnectionName] = outputConnectionItem;
+            this.lastConnectionItem = outputConnectionItem;
+        }
+        return this.connection[outputConnectionName];
+    }
+
+    findInputConnectionItem() {
+        const inputConnectionName = this.currentConnectionName() + "-in";
+        if(!this.connection[inputConnectionName]) {
+            const inputConnectionItem = naturalItem(inputConnectionName);
+            this.lastConnectionItem?.let(item => {inputConnectionItem.ingredients[item.name] = 1} );
+            this.connection[inputConnectionName] = inputConnectionItem;
+            this.lastConnectionItem = inputConnectionItem;
+        }
+        return this.connection[inputConnectionName];
     }
 
     currentConnectionName() {
@@ -192,12 +215,6 @@ class Bus {
         if(null === this.connection) {
             this.connectionIndex++;
             this.connection = {};
-            const connectionName = this.currentConnectionName();
-            const connectionItem = naturalItem(connectionName);
-            if(this.connectionIndex > 0) {
-                connectionItem.ingredients[this.name + "-" + (this.connectionIndex - 1)] = 1;
-            }
-            this.connection[connectionName] = connectionItem;
         }
     }
 

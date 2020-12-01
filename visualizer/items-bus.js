@@ -248,6 +248,10 @@ const base = {
             target: "research",
             output: "chemical-science-pack"
         },
+        robots: {
+            source: "main",
+            outputs: ["construction-robot", "logistic-robot"]
+        },
         "production-science": {
             source: "main",
             target: "research",
@@ -270,10 +274,6 @@ const base = {
         rocket: {
             source: "main",
             output: "rocket-launch"
-        },
-        robots: {
-            source: "main",
-            outputs: ["construction-robot", "logistic-robot"]
         }
     }
 };

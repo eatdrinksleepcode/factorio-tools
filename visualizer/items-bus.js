@@ -67,9 +67,10 @@ class Peripheral {
 
     reduceOutputs() {
         this.inputBuses.forEach(bus => bus.connect());
-        this.outputBus.connect();
+        this.outputBus?.connect();
         this.produces.forEach(productName => {
-            this.outputBus.put(this.reduceRecipesForProduct(productName));
+            const outputItem = this.reduceRecipesForProduct(productName);
+            this.outputBus?.put(outputItem);
         });
     }
 
@@ -200,8 +201,6 @@ const base = {
         oil: [naturalItem("water"), naturalItem("crude-oil")],
         main: [/*HACK*/naturalItem("water"), naturalItem("coal")],
         research: [],
-        rocket: [],
-        robot: []
     },
     peripherals: {
         forge: {
@@ -261,17 +260,14 @@ const base = {
         },
         research: {
             source: "research",
-            target: "research",
             output: "research"
         },
         rocket: {
             source: "main",
-            target: "rocket",
             output: "rocket-launch"
         },
         robots: {
             source: "main",
-            target: "robot",
             outputs: ["construction-robot", "logistic-robot"]
         }
     }

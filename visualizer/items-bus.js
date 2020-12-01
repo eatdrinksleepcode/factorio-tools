@@ -55,19 +55,6 @@ recipesByName = allRecipes.reduce((list, recipe) => {
     return list;
 }, {});
 
-const peripherals = {
-    "automation-science": {
-        produces: {
-            "automation-science-pack": 1
-        }
-    },
-    "logistic-science": {
-        produces: {
-            "logistic-science-pack": 1
-        }
-    }
-};
-
 class Peripheral {
     constructor(name, produces, inputBuses, outputBus) {
         this.name = name;
@@ -207,25 +194,97 @@ class Bus {
     }
 }
 
-const base = {};
-base["oreBus"] = new Bus("ore", [naturalItem("iron-ore"), naturalItem("copper-ore"), naturalItem("stone")]);
-base["oilBus"] = new Bus("oil", [naturalItem("water"), naturalItem("crude-oil")]);
-base["mainBus"] = new Bus("main", [/*HACK*/ naturalItem("water"), naturalItem("coal")]);
-base["forge"] = new Peripheral("forge", ["iron-plate", "steel-plate", "copper-plate", "stone-brick", "stone"], base["oreBus"], base["mainBus"]);
-base["oil"] = new Peripheral("oil", ["petroleum-gas", "lubricant", "light-oil", "sulfur", "sulfuric-acid", "battery", "plastic-bar"], [base["oilBus"], base["mainBus"]], base["mainBus"]);
-base["researchBus"] = new Bus("research");
-base["rocketBus"] = new Bus("rocket");
-base["robotBus"] = new Bus("robot");
-base["electronic-circuits"] = new Peripheral("electronic-circuits", ["electronic-circuit"], base["mainBus"], base["mainBus"]);
-base["advanced-circuits"] = new Peripheral("advanced-circuits", ["advanced-circuit"], base["mainBus"], base["mainBus"]);
-base["processing-units"] = new Peripheral("processing-units", ["processing-unit"], base["mainBus"], base["mainBus"]);
-base["automation-science"] = new Peripheral("automation-science", ["automation-science-pack"], base["mainBus"], base["researchBus"]);
-base["logistic-science"] = new Peripheral("logistic-science", ["logistic-science-pack"], base["mainBus"], base["researchBus"]);
-base["chemical-science"] = new Peripheral("chemical-science", ["chemical-science-pack"], base["mainBus"], base["researchBus"]);
-base["military-science"] = new Peripheral("military-science", ["military-science-pack"], base["mainBus"], base["researchBus"]);
-base["production-science"] = new Peripheral("production-science", ["production-science-pack"], base["mainBus"], base["researchBus"]);
-base["utility-science"] = new Peripheral("utility-science", ["utility-science-pack"], base["mainBus"], base["researchBus"]);
-base["research"] = new Peripheral("research", ["research"], base["researchBus"], base["researchBus"]);
-base["rocket-launch"] = new Peripheral("rocket-launch", ["rocket-launch"], base["mainBus"], base["rocketBus"]);
-base["robots"] = new Peripheral("robots", ["construction-robot", "logistic-robot"], base["mainBus"], base["robotBus"])
-allItems = Object.values(base).reduce((x, y) => Object.assign(x, y.items), {});
+const base = {
+    buses: {
+        ore: [naturalItem("iron-ore"), naturalItem("copper-ore"), naturalItem("stone")],
+        oil: [naturalItem("water"), naturalItem("crude-oil")],
+        main: [/*HACK*/naturalItem("water"), naturalItem("coal")],
+        research: [],
+        rocket: [],
+        robot: []
+    },
+    peripherals: {
+        forge: {
+            source: "ore",
+            target: "main",
+            outputs: ["iron-plate", "steel-plate", "copper-plate", "stone", "stone-brick"]
+        },
+        oil: {
+            sources: ["oil", "main"],
+            target: "main",
+            outputs: ["petroleum-gas", "lubricant", "light-oil", "sulfur", "sulfuric-acid", "battery", "plastic-bar"]
+        },
+        "green-circuits": {
+            source: "main",
+            target: "main",
+            output: "electronic-circuit"
+        },
+        "red-circuits": {
+            source: "main",
+            target: "main",
+            output: "advanced-circuit"
+        },
+        "blue-circuits": {
+            source: "main",
+            target: "main",
+            output: "processing-unit"
+        },
+        "automation-science": {
+            source: "main",
+            target: "research",
+            output: "automation-science-pack"
+        },
+        "logistic-science": {
+            source: "main",
+            target: "research",
+            output: "logistic-science-pack"
+        },
+        "military-science": {
+            source: "main",
+            target: "research",
+            output: "military-science-pack"
+        },
+        "chemical-science": {
+            source: "main",
+            target: "research",
+            output: "chemical-science-pack"
+        },
+        "production-science": {
+            source: "main",
+            target: "research",
+            output: "production-science-pack"
+        },
+        "utility-science": {
+            source: "main",
+            target: "research",
+            output: "utility-science-pack"
+        },
+        research: {
+            source: "research",
+            target: "research",
+            output: "research"
+        },
+        rocket: {
+            source: "main",
+            target: "rocket",
+            output: "rocket-launch"
+        },
+        robots: {
+            source: "main",
+            target: "robot",
+            outputs: ["construction-robot", "logistic-robot"]
+        }
+    }
+};
+
+const buses = Object.keys(base.buses).reduce((result, busName) => {
+    result[busName] = new Bus(busName, base.buses[busName]);
+    return result;
+}, {});
+const peripherals = Object.keys(base.peripherals).map(peripheralName => base.peripherals[peripheralName].let(peripheral => new Peripheral(
+    peripheralName,
+    peripheral.outputs || [peripheral.output],
+    peripheral.sources?.let(sources => sources.map(sourceName => buses[sourceName])) || [buses[peripheral.source]],
+    buses[peripheral.target]
+)));
+allItems = Object.values({...buses, ...peripherals}).reduce((x, y) => Object.assign(x, y.items), {});

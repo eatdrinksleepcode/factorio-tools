@@ -274,6 +274,10 @@ const base = {
         rocket: {
             source: "main",
             output: "rocket-launch"
+        },
+        "logistics-mall": {
+            sources: ["main", "logistics-mall"],
+            outputs: ["transport-belt", "underground-belt", "splitter", "fast-transport-belt", "fast-underground-belt", "fast-splitter", "express-transport-belt", "express-underground-belt", "express-splitter"]
         }
     }
 };

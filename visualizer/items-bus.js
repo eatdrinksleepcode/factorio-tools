@@ -213,25 +213,15 @@ const base = {
             target: "main",
             outputs: ["petroleum-gas", "lubricant", "light-oil", "sulfur", "sulfuric-acid", "battery", "plastic-bar"]
         },
-        "green-circuits": {
-            source: "main",
-            target: "main",
-            output: "electronic-circuit"
-        },
-        "red-circuits": {
-            source: "main",
-            target: "main",
-            output: "advanced-circuit"
-        },
-        "blue-circuits": {
-            source: "main",
-            target: "main",
-            output: "processing-unit"
-        },
         "automation-science": {
             source: "main",
             target: "research",
             output: "automation-science-pack"
+        },
+        "green-circuits": {
+            source: "main",
+            target: "main",
+            output: "electronic-circuit"
         },
         "logistic-science": {
             source: "main",
@@ -243,6 +233,16 @@ const base = {
             target: "research",
             output: "military-science-pack"
         },
+        "engine": {
+            source: "main",
+            target: "main",
+            output: "engine-unit"
+        },
+        "red-circuits": {
+            source: "main",
+            target: "main",
+            output: "advanced-circuit"
+        },
         "chemical-science": {
             source: "main",
             target: "research",
@@ -252,6 +252,11 @@ const base = {
             source: "main",
             target: "research",
             output: "production-science-pack"
+        },
+        "blue-circuits": {
+            source: "main",
+            target: "main",
+            output: "processing-unit"
         },
         "utility-science": {
             source: "main",

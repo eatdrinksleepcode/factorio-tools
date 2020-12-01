@@ -143,10 +143,10 @@
         defs.append(marker);
 
         var layout = Viva.Graph.Layout.forceDirected(graph, {
-            springLength : 200,
-            springCoeff : 0.00005,
-            dragCoeff : 0.002,
-            gravity : -3.2
+            springLength : 175,
+            springCoeff : 0.0001,
+            dragCoeff : 0.02,
+            gravity : -5.5
         });
 
         renderer = Viva.Graph.View.renderer(graph,
